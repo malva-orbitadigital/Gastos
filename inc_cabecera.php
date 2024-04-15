@@ -33,3 +33,18 @@
     </nav>
 </body>
 </html>
+
+<?php
+function conectar() : PDO{
+    $servername = "localhost";
+    $username = "root";
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=contab", $username);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch(PDOException $e) {
+        die("Connection failed: " . $e->getMessage());
+    }
+    return $conn;
+}
+?>
