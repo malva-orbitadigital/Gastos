@@ -7,7 +7,7 @@ $categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'c
                 'alquiler'=>'Alquiler', 'otro'=>'Otro'];
 
 
-function insertDB(string $date, string $quantity, string $description, string $category){
+function insertDB(string $date, float $quantity, string $description, string $category){
     try {
         $connection = conectar();
         $sql = ("INSERT INTO gastos 
@@ -31,9 +31,6 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
 
     $rand=rand();
     $_SESSION['rand']=$rand;
-
-
-
 
     echo isset($saved) ? "
     <p class='bg-".$saved['bgcolor']." text-center text-white mt-5 p-3'>".$saved['text']."</p>

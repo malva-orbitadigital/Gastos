@@ -52,8 +52,9 @@ function mostrarLista(string $query){
         <thead>
             <tr>
                 <th scope="col">Fecha</th>
-                <th scope="col">Importe</th>
                 <th scope="col">Descripción</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Categoría</th>
             </tr>
         </thead>
         <tbody>';
