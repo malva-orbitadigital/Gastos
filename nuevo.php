@@ -46,7 +46,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
         </div>
         <div class="mb-3">
             <label for="quantity" class="form-label">Importe</label>
-            <input name="quantity" type="text" class="form-control" id="quantity" required>
+            <input name="quantity" type="number" class="form-control" id="quantity" required>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Descripción</label>
@@ -67,3 +67,6 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
         <button name="save" type="submit" class="btn btn-primary">Guardar</button>
     </form>
 </div>
+<?php
+mostrarLista("SELECT fecha, descripcion, importe, categoria FROM gastos ORDER BY fecha DESC");
+?>

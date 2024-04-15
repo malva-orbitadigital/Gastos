@@ -47,22 +47,22 @@ function conectar() : PDO{
     return $conn;
 }
 
+
 function mostrarLista(string $query){
-    echo '<table class="table m-3">
-        <thead>
-            <tr>
-                <th scope="col">Fecha</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Importe</th>
-                <th scope="col">Categoría</th>
-            </tr>
-        </thead>
-        <tbody>';
+    $categories = ['fecha' => 'Fecha', 'descripcion' => 'Descripción', 'importe' => 'Importe', 'categoria' => 'Categoría'];
+    echo '<table class="table">';
+    echo '<thead><tr>';
     $connection = conectar();
     $stmt = $connection->prepare($query);
     $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    foreach($stmt->fetchAll() as $row){
+    $stmt->setFetchMode(PDO::FETCH_NAMED);
+    $data = $stmt->fetchAll();
+    foreach($data[0] as $category => $value){
+        echo "<th scope='col'>".$categories[$category]."</th>";
+    }
+    echo '</tr></thead>';
+    echo '<tbody>';
+    foreach($data as $row){
         echo "<tr>";
         foreach($row as $col){
             echo "<td>$col</td>";
