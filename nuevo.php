@@ -6,16 +6,16 @@ session_start();
 $categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'compra'=>'Compra',
                 'alquiler'=>'Alquiler', 'otro'=>'Otro'];
 
-$saved = false;
 
-function insertDB(string $date, float $quantity, string $description, string $category){
+function insertDB(string $date, string $quantity, string $description, string $category){
     try {
         $connection = conectar();
         $sql = ("INSERT INTO gastos 
                 VALUES ('$date', '$quantity', '$description', '$category')");
         $connection->exec($sql);
+        return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
     } catch (PDOException $e){
-        echo $e->getMessage();
+        return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
     }
 }
 
@@ -24,10 +24,9 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    insertDB($date, $quantity, $description, $category);
-    $saved = true;
+    $saved = insertDB($date, $quantity, $description, $category);
 } else {
-    $saved = false;
+    unset($saved);
 }
 
     $rand=rand();
@@ -36,8 +35,8 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
 
 
 
-    echo $saved ? "
-    <p class='bg-success text-center text-white mt-5 p-3'>Anotación añadida correctamente</p>
+    echo isset($saved) ? "
+    <p class='bg-".$saved['bgcolor']." text-center text-white mt-5 p-3'>".$saved['text']."</p>
     " : "";
     ?>
 
@@ -50,7 +49,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
         </div>
         <div class="mb-3">
             <label for="quantity" class="form-label">Importe</label>
-            <input name="quantity" type="number" class="form-control" id="quantity" required>
+            <input name="quantity" type="text" class="form-control" id="quantity" required>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Descripción</label>
