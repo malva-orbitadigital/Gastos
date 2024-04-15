@@ -38,6 +38,11 @@
 $categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'compra'=>'Compra',
                 'alquiler'=>'Alquiler', 'otro'=>'Otro'];
 
+function dateFormat(string $date){
+    $aux = array_reverse(explode('-', $date));
+    return implode('-', $aux);
+}
+
 function conectar() : PDO{
     $servername = "localhost";
     $username = "root";
@@ -69,8 +74,9 @@ function mostrarLista(string $query){
     foreach($data as $row){
         echo "<tr>";
         foreach($row as $name => $col){
-            echo $name !== 'id' ? "<td>$col</td>" : 
-            "<td><a href='modificar.php?id=$col'
+            echo $name !== 'id' ? 
+                $name === 'fecha' ? "<td>".dateFormat($col)."</td>" : "<td>$col</td>" 
+                : "<td><a href='modificar.php?id=$col'
              class='btn btn-outline-secondary'>Modificar</a></td>";
         }
         echo "</tr>";
