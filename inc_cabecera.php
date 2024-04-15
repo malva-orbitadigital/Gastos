@@ -34,6 +34,10 @@
 </html>
 
 <?php
+
+$categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'compra'=>'Compra',
+                'alquiler'=>'Alquiler', 'otro'=>'Otro'];
+
 function conectar() : PDO{
     $servername = "localhost";
     $username = "root";
@@ -46,7 +50,6 @@ function conectar() : PDO{
     }
     return $conn;
 }
-
 
 function mostrarLista(string $query){
     $categories = ['fecha' => 'Fecha', 'descripcion' => 'Descripción', 'importe' => 'Importe', 'categoria' => 'Categoría'];
@@ -65,12 +68,42 @@ function mostrarLista(string $query){
     echo '<tbody>';
     foreach($data as $row){
         echo "<tr>";
+        $dataURL = '';
         foreach($row as $name => $col){
-            echo $name !== 'id' ? "<td>$col</td>" : 
-            "<td><a href='modificar.php?id=$col' class='btn btn-outline-secondary'>Modificar</a></td>";
+            echo $name !== 'id' ? "<td>$col</td>" : '';
+            $dataURL.=$name.'='.$col.'&';
         }
+        echo "<td><a href='modificar.php?$dataURL'
+         class='btn btn-outline-secondary'>Modificar</a></td>";
         echo "</tr>";
     }
     echo '</tbody></table>';
 }
+
+
+function insertDB(string $date, float $quantity, string $description, string $category){
+    try {
+        $connection = conectar();
+        $sql = ("INSERT INTO gastos 
+                VALUES ('$date', '$quantity', '$description', '$category')");
+        $connection->exec($sql);
+        return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
+    } catch (PDOException $e){
+        return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
+    }
+}
+
+function updateDB(string $date, float $quantity, string $description, string $category, int $id){
+    try {
+        $connection = conectar();
+        $sql = "UPDATE gastos 
+                SET fecha='$date', importe='$quantity', descripcion='$description', categoria='$category'
+                WHERE id='$id'";
+        $connection->exec($sql);
+        return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
+    } catch (PDOException $e){
+        return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
+    }
+}
+
 ?>
