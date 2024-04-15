@@ -6,7 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="menu.js"></script>
+    <script src="gastos.js"></script>
     <title>Gestor de gastos</title>
 </head>
 <body>
@@ -46,5 +46,29 @@ function conectar() : PDO{
         die("Connection failed: " . $e->getMessage());
     }
     return $conn;
+}
+
+function mostrarLista(string $query){
+    echo '<table class="table m-3">
+        <thead>
+            <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Descripción</th>
+            </tr>
+        </thead>
+        <tbody>';
+    $connection = conectar();
+    $stmt = $connection->prepare($query);
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach($stmt->fetchAll() as $row){
+        echo "<tr>";
+        foreach($row as $col){
+            echo "<td>$col</td>";
+        }
+        echo "</tr>";
+    }
+    echo '</tbody></table>';
 }
 ?>
