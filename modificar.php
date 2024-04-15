@@ -2,8 +2,14 @@
 include_once 'inc_cabecera.php';
 include_once 'inc_pie.php';
 
-if (!isset($_GET['id'])){
-    die('<div class="alert">No se ha podido encontrar la anotación</div>');
+
+function getElem(){
+    $id = $_GET['id'];
+    $connection = conectar();
+    $stmt = $connection->prepare("SELECT * FROM gastos WHERE id = $id");
+    $stmt->execute();
+    $stmt->setFetchMode(PDO::FETCH_NAMED);
+    return $stmt->fetchAll()[0];
 }
 
 if (isset($_POST['save'])){
@@ -11,9 +17,20 @@ if (isset($_POST['save'])){
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    updateDB($date, $quantity, $description, $category, $_GET['id']);
-    header('Location: listado.php');
+    $saved = updateDB($date, $quantity, $description, $category, $_GET['id']);
+    $data = getElem();
+} else {
+    unset($saved);
 }
+
+$data = getElem();
+
+$rand=rand();
+$_SESSION['rand']=$rand;
+
+echo isset($saved) ? "
+<p class='bg-".$saved['bgcolor']." text-center text-white mt-5 p-3'>".$saved['text']."</p>
+" : "";
 ?>
 
 <div class="m-5">
@@ -21,15 +38,15 @@ if (isset($_POST['save'])){
     <form method="post" action="" class="col-6 offset-3 ">
         <div class="mb-3">
             <label for="date" class="form-label">Fecha</label>
-            <input name="date" type="date" value="<?php echo $_GET['fecha']; ?>" class="form-control" id="date" required>
+            <input name="date" type="date" value="<?php echo $data['fecha']; ?>" class="form-control" id="date" required>
         </div>
         <div class="mb-3">
             <label for="quantity" class="form-label">Importe</label>
-            <input name="quantity" type="number" step="any" min=0 value="<?php echo $_GET['importe']; ?>" class="form-control" id="quantity" required>
+            <input name="quantity" type="number" step="any" min=0 value="<?php echo $data['importe']; ?>" class="form-control" id="quantity" required>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Descripción</label>
-            <textarea name="description" class="form-control" rows="3" id="description"><?php echo $_GET['descripcion']; ?></textarea>
+            <textarea name="description" class="form-control" rows="3" id="description"><?php echo $data['descripcion']; ?></textarea>
         </div>
         <div class="mb-3">
             <label for="category" class="form-label">Categoría</label>
@@ -38,7 +55,7 @@ if (isset($_POST['save'])){
                 <?php
                 foreach ($categories as $category => $name){
                     echo "<option value=$category ";
-                    echo $category === $_GET['categoria'] ? "selected" : "";
+                    echo $category === $data['categoria'] ? "selected" : "";
                     echo ">$name</option>";
                 }
                 ?>

@@ -68,13 +68,11 @@ function mostrarLista(string $query){
     echo '<tbody>';
     foreach($data as $row){
         echo "<tr>";
-        $dataURL = '';
         foreach($row as $name => $col){
-            echo $name !== 'id' ? "<td>$col</td>" : '';
-            $dataURL.=$name.'='.$col.'&';
+            echo $name !== 'id' ? "<td>$col</td>" : 
+            "<td><a href='modificar.php?id=$col'
+             class='btn btn-outline-secondary'>Modificar</a></td>";
         }
-        echo "<td><a href='modificar.php?$dataURL'
-         class='btn btn-outline-secondary'>Modificar</a></td>";
         echo "</tr>";
     }
     echo '</tbody></table>';
@@ -87,9 +85,9 @@ function insertDB(string $date, float $quantity, string $description, string $ca
         $sql = ("INSERT INTO gastos 
                 VALUES ('$date', '$quantity', '$description', '$category')");
         $connection->exec($sql);
-        return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
+        return ["text" => "Anotación modificada correctamente", "bgcolor" => "success"];
     } catch (PDOException $e){
-        return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
+        return ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
 }
 
