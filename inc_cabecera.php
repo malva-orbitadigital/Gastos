@@ -58,14 +58,16 @@ function mostrarLista(string $query){
     $stmt->setFetchMode(PDO::FETCH_NAMED);
     $data = $stmt->fetchAll();
     foreach($data[0] as $category => $value){
-        echo "<th scope='col'>".$categories[$category]."</th>";
+        echo $category !== 'id' ? "<th scope='col'>".$categories[$category]."</th>" : "";
     }
+    echo "<th scope='col'></th>";
     echo '</tr></thead>';
     echo '<tbody>';
     foreach($data as $row){
         echo "<tr>";
-        foreach($row as $col){
-            echo "<td>$col</td>";
+        foreach($row as $name => $col){
+            echo $name !== 'id' ? "<td>$col</td>" : 
+            "<td><a href='modificar.php?id=$col' class='btn btn-outline-secondary'>Modificar</a></td>";
         }
         echo "</tr>";
     }

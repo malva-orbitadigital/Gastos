@@ -68,5 +68,5 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     </form>
 </div>
 <?php
-mostrarLista("SELECT fecha, descripcion, importe, categoria FROM gastos ORDER BY fecha DESC");
+mostrarLista("SELECT fecha, descripcion, importe, categoria, id FROM gastos ORDER BY fecha DESC");
 ?>
