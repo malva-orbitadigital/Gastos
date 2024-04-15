@@ -6,6 +6,7 @@ session_start();
 $categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'compra'=>'Compra',
                 'alquiler'=>'Alquiler', 'otro'=>'Otro'];
 
+$saved = false;
 
 function insertDB(string $date, float $quantity, string $description, string $category){
     try {
@@ -18,19 +19,27 @@ function insertDB(string $date, float $quantity, string $description, string $ca
     }
 }
 
-if (isset($_POST['save'])){
+if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     $date = $_POST['date'];
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
     insertDB($date, $quantity, $description, $category);
-    unset($_POST['date']);
-    unset($_POST['quantity']);
-    unset($_POST['descripcion']);
-    unset($_POST['category']);
+    $saved = true;
+} else {
+    $saved = false;
 }
 
-?>
+    $rand=rand();
+    $_SESSION['rand']=$rand;
+
+
+
+
+    echo $saved ? "
+    <p class='bg-success text-center text-white mt-5 p-3'>Anotación añadida correctamente</p>
+    " : "";
+    ?>
 
 <div class="m-5">
     <h3 class="text-center mb-3">Nueva anotación</h3>
@@ -58,6 +67,7 @@ if (isset($_POST['save'])){
                 ?>
             </select>
         </div>
+        <input type="hidden" value="<?php echo $rand; ?>" name="randcheck" />
         <button name="save" type="submit" class="btn btn-primary">Guardar</button>
     </form>
 </div>
