@@ -82,12 +82,13 @@ function mostrarLista(string $query){
 function insertDB(string $date, float $quantity, string $description, string $category){
     try {
         $connection = conectar();
-        $sql = ("INSERT INTO gastos 
+        $sql = ("INSERT INTO gastos (fecha, importe, descripcion, categoria)
                 VALUES ('$date', '$quantity', '$description', '$category')");
         $connection->exec($sql);
-        return ["text" => "Anotación modificada correctamente", "bgcolor" => "success"];
+        return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
     } catch (PDOException $e){
-        return ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
+        echo $e;
+        return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
     }
 }
 
@@ -98,9 +99,9 @@ function updateDB(string $date, float $quantity, string $description, string $ca
                 SET fecha='$date', importe='$quantity', descripcion='$description', categoria='$category'
                 WHERE id='$id'";
         $connection->exec($sql);
-        return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
+        return ["text" => "Anotación modificada correctamente", "bgcolor" => "success"];
     } catch (PDOException $e){
-        return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
+        return ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
 }
 
