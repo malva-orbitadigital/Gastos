@@ -34,6 +34,8 @@
 </html>
 
 <?php
+include_once './src/ConexionBD.php';
+include_once './src/Gastos.php';
 
 $categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'compra'=>'Compra',
                 'alquiler'=>'Alquiler', 'otro'=>'Otro'];
@@ -43,24 +45,17 @@ function dateFormat(string $date){
     return implode('-', $aux);
 }
 
-function conectar() : PDO{
-    $servername = "localhost";
-    $username = "root";
-
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=contab", $username);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch(PDOException $e) {
-        die("Connection failed: " . $e->getMessage());
-    }
-    return $conn;
-}
-
+//TODO: añadir total
+//TODO: paginación
+//TODO: return
+//TODO: documentacion
+//TODO: clases
+//TODO: delete
 function mostrarLista(string $query){
     $categories = ['fecha' => 'Fecha', 'descripcion' => 'Descripción', 'importe' => 'Importe', 'categoria' => 'Categoría'];
     echo '<table class="table">';
     echo '<thead><tr>';
-    $connection = conectar();
+    $connection = ConexionBD::conectar();
     $stmt = $connection->prepare($query);
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_NAMED);
@@ -76,8 +71,8 @@ function mostrarLista(string $query){
         foreach($row as $name => $col){
             echo $name !== 'id' ? 
                 $name === 'fecha' ? "<td>".dateFormat($col)."</td>" : "<td>$col</td>" 
-                : "<td><a href='modificar.php?id=$col'
-             class='btn btn-outline-secondary'>Modificar</a></td>";
+            : "<td><a href='modificar.php?id=$col'
+            class='btn btn-outline-secondary'>Modificar</a></td>";
         }
         echo "</tr>";
     }
@@ -85,30 +80,5 @@ function mostrarLista(string $query){
 }
 
 
-function insertDB(string $date, float $quantity, string $description, string $category){
-    try {
-        $connection = conectar();
-        $sql = ("INSERT INTO gastos (fecha, importe, descripcion, categoria)
-                VALUES ('$date', '$quantity', '$description', '$category')");
-        $connection->exec($sql);
-        return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
-    } catch (PDOException $e){
-        echo $e;
-        return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
-    }
-}
-
-function updateDB(string $date, float $quantity, string $description, string $category, int $id){
-    try {
-        $connection = conectar();
-        $sql = "UPDATE gastos 
-                SET fecha='$date', importe='$quantity', descripcion='$description', categoria='$category'
-                WHERE id='$id'";
-        $connection->exec($sql);
-        return ["text" => "Anotación modificada correctamente", "bgcolor" => "success"];
-    } catch (PDOException $e){
-        return ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
-    }
-}
 
 ?>

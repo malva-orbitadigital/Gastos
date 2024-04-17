@@ -3,12 +3,14 @@ include_once 'inc_cabecera.php';
 include_once 'inc_pie.php';
 session_start();
 
+//TODO: arreglar date
+
 if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     $date = $_POST['date'];
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    $saved = insertDB($date, $quantity, $description, $category);
+    $saved = Gastos::insertGasto($date, $quantity, $description, $category);
 } else {
     unset($saved);
 }
@@ -52,5 +54,5 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     </form>
 </div>
 <?php
-mostrarLista("SELECT fecha, descripcion, importe, categoria, id FROM gastos ORDER BY fecha DESC");
+Gastos::mostrarLista("SELECT fecha, descripcion, importe, categoria, id FROM gastos ORDER BY fecha DESC");
 ?>

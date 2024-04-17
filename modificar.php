@@ -5,7 +5,7 @@ include_once 'inc_pie.php';
 
 function getElem(){
     $id = $_GET['id'];
-    $connection = conectar();
+    $connection = ConexionBD::conectar();
     $stmt = $connection->prepare("SELECT * FROM gastos WHERE id = $id");
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_NAMED);
@@ -17,7 +17,7 @@ if (isset($_POST['save'])){
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    $saved = updateDB($date, $quantity, $description, $category, $_GET['id']);
+    $saved = Gastos::updateGasto($date, $quantity, $description, $category, $_GET['id']);
     $data = getElem();
 } else {
     unset($saved);

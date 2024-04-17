@@ -14,7 +14,7 @@ include_once 'inc_pie.php';
     <?php
     if (isset($_POST['busqueda'])){
         $input = $_POST['busqueda'];
-        mostrarLista("SELECT fecha, importe, id FROM gastos 
+        Gastos::mostrarLista("SELECT fecha, importe, id FROM gastos 
                     WHERE descripcion LIKE '%$input%'
                     ORDER BY fecha DESC");
     }

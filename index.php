@@ -8,7 +8,7 @@ include_once 'inc_pie.php';
     <p>Actualmente hay 
         <?php 
     
-        $connection = conectar();
+        $connection = ConexionBD::conectar();
         $stmt = $connection->prepare("SELECT count(*) FROM gastos");
         $stmt->execute();
         $stmt->bindColumn(1, $total);
