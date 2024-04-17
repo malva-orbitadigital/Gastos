@@ -7,7 +7,7 @@ include_once 'inc_pie.php';
     <h3>Bienvenido a mi contabilidad doméstica.</h3>
     <p>Actualmente hay 
         <?php 
-        $total = Gastos::getNumGastos();
+        $total = Expenses::getNumExpenses();
         echo $total;
         ?>
         anotaciones.</p>

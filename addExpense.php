@@ -10,7 +10,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    $saved = Gastos::insertGasto($date, $quantity, $description, $category);
+    $saved = Expenses::insertExpense($date, $quantity, $description, $category);
 } else {
     unset($saved);
 }
@@ -43,8 +43,8 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
             <select id="category" name="category" class="form-select" required>
                 <option value="">Selecciona una categoría...</option>
                 <?php
-                foreach (Categoria::getCategorias() as $category){
-                    echo "<option value=".$category['nombre'].">".ucfirst($category['nombre'])."</option>";
+                foreach (Category::getCategories() as $category){
+                    echo "<option value=".$category['id'].">".ucfirst($category['nombre'])."</option>";
                 }
                 ?>
             </select>
@@ -54,5 +54,6 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     </form>
 </div>
 <?php
-echo Gastos::mostrarLista("fecha, descripcion, importe, categoria", "gastos", "", "fecha", "desc");
+echo Expenses::showExpenses("fecha, descripcion, importe, categorias.nombre as categoria, gastos.id", 
+"gastos inner join categorias on gastos.categoria = categorias.id", "", "fecha", "desc");
 ?>

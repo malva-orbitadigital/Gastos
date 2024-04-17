@@ -2,22 +2,19 @@
 include_once 'inc_cabecera.php';
 include_once 'inc_pie.php';
 
-function getElem(){
-    
-}
 
 if (isset($_POST['save'])){
     $date = $_POST['date'];
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    $saved = Gastos::updateGasto("$date", $quantity, $description, $category, $_GET['id']);
-    $data = getElem();
+    $saved = Expenses::updateExpense("$date", $quantity, $description, $category, $_GET['id']);
+    $data = Expenses::getExpense($_GET['id']);
 } else {
     unset($saved);
 }
 
-$data = getElem();
+$data = Expenses::getExpense($_GET['id']);
 
 $rand=rand();
 $_SESSION['rand']=$rand;
@@ -47,10 +44,10 @@ echo isset($saved) ? "
             <select id="category" name="category" class="form-select" required>
                 <option value="">Selecciona una categoría...</option>
                 <?php
-                foreach ($categories as $category => $name){
-                    echo "<option value=$category ";
-                    echo $category === $data['categoria'] ? "selected" : "";
-                    echo ">$name</option>";
+                foreach (Category::getCategories() as $category){
+                    echo "<option value=".$category['id'];
+                    echo $category['nombre'] === $data['categoria'] ? " selected>" : ">";
+                    echo ucfirst($category['nombre'])."</option>";
                 }
                 ?>
             </select>

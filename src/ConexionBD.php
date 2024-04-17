@@ -1,6 +1,7 @@
 <?php
 
 class ConexionBD{
+    //TODO: una instancia
     
     static private $servername = "localhost";
     static private $username = "root";

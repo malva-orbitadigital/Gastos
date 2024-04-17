@@ -18,13 +18,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                    <a class="nav-link" href="buscar.php">Buscar</a>
+                    <a class="nav-link" href="search.php">Buscar</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="listado.php">Listado</a>
+                    <a class="nav-link" href="listExpenses.php">Listado</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="nuevo.php">Nuevo</a>
+                    <a class="nav-link" href="addExpense.php">Nuevo</a>
                     </li>
                 </ul>
             </div>
@@ -35,18 +35,6 @@
 
 <?php
 include_once './src/ConexionBD.php';
-include_once './src/Gastos.php';
-include_once './src/Categoria.php';
-
-$categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'compra'=>'Compra',
-                'alquiler'=>'Alquiler', 'otro'=>'Otro'];
-
-function dateFormat(string $date){
-    $aux = array_reverse(explode('-', $date));
-    return implode('-', $aux);
-}
-
-
-
-
+include_once './src/Expenses.php';
+include_once './src/Category.php';
 ?>
