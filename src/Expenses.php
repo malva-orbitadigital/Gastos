@@ -62,17 +62,11 @@ class Expenses {
         ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
     }
 
-    static function updateExpense(string $date, float $quantity, string $description, string $category, int $id){
-        try {
-            $connection = ConexionBD::connect();
-            $sql = "UPDATE gastos 
-                    SET fecha='$date', importe='$quantity', descripcion='$description', categoria='$category'
-                    WHERE id='$id'";
-            $connection->exec($sql);
-            return ["text" => "Anotación modificada correctamente", "bgcolor" => "success"];
-        } catch (PDOException $e){
-            return ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
-        }
+    static function updateExpense(string $date, float $quantity, string $description, string $category, int $id) : array{
+        return ConexionBD::update("gastos",
+        ["fecha"=>$date, "importe"=>$quantity, "descripcion"=>$description, "categoria"=>$category], "gastos.id LIKE $id") ? 
+        ["text" => "La anotación se ha modificado correctamente", "bgcolor" => "success"] : 
+        ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
 
 

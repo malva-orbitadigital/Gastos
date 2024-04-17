@@ -11,8 +11,6 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     $description = $_POST['description'];
     $category = $_POST['category'];
     $saved = Expenses::addExpense($date, $quantity, $description, $category);
-    //echo $saved;
-
 } else {
     unset($saved);
 }

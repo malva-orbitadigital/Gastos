@@ -51,7 +51,27 @@ class ConexionBD{
         if (!empty($columns)) $query .= "(".implode(',', $columns).") ";
         $query .= "VALUES ('".implode("','", $values)."')";
 
-        // return $query;
+        try {
+            $stmt = $connection->prepare($query);
+            return $stmt->execute();            
+        } catch (PDOException $e){
+            die($e);
+        }
+    }
+
+    static function update(string $table, array $set, string $where){
+        $connection = ConexionBD::connect();
+
+        if ($table === '' || empty($set)) return "Param error";
+
+        $query = "UPDATE $table SET ";
+        $keys = array_keys($set);
+        $last_key = end($keys);
+        foreach ($set as $column => $value){
+            $query .= $column." = '".$value."' ";
+            if ($column !== $last_key) $query.=", ";
+        }
+        if (!empty($where)) $query .= " WHERE ".$where;
 
         try {
             $stmt = $connection->prepare($query);
@@ -60,4 +80,15 @@ class ConexionBD{
             die($e);
         }
     }
+
+    // try {
+    //     $connection = ConexionBD::connect();
+    //     $sql = "UPDATE gastos 
+    //             SET fecha='$date', importe='$quantity', descripcion='$description', categoria='$category'
+    //             WHERE id='$id'";
+    //     $connection->exec($sql);
+    //     return ["text" => "Anotación modificada correctamente", "bgcolor" => "success"];
+    // } catch (PDOException $e){
+    //     return ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
+    // }
 }
