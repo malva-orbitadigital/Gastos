@@ -6,16 +6,38 @@ class ConexionBD{
     static private $username = "root";
     static private $dbname = "contab";
 
-    //TODO: arreglar catch
     //TODO: por qué no hay que recargar
     public static function conectar() : PDO{
-
         try {
             $conn = new PDO("mysql:host=".self::$servername.";dbname=".self::$dbname, self::$username);
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch(PDOException $e) {
             die("Connection failed: " . $e->getMessage());
         }
         return $conn;
+    }
+
+    public static function select(string $select, string $from, string $where, string $orderBy, string $orderHow) : array{
+        $connection = ConexionBD::conectar();
+
+        if ($from === '') return "Param error";
+    
+        if ($select === '') $select = '*';
+        $query = "SELECT $select FROM $from ";
+        if ($where !== '') $query .= "WHERE $where ";
+        if ($orderBy !== ''){
+            $query .= " ORDER BY $orderBy "; 
+            $orderHow === 'desc' ? $query .= "DESC" : $query .= "ASC";
+        }
+
+        try{
+            $stmt = $connection->prepare($query);
+            $stmt->execute();
+            $stmt->setFetchMode(PDO::FETCH_NAMED);
+            $data = $stmt->fetchAll();
+        } catch(PDOException $e){
+            die($e);
+        }
+
+        return $data;
     }
 }

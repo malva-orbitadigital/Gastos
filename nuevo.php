@@ -54,5 +54,5 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     </form>
 </div>
 <?php
-Gastos::mostrarLista("SELECT fecha, descripcion, importe, categoria, id FROM gastos ORDER BY fecha DESC");
+echo Gastos::mostrarLista("fecha, descripcion, importe, categoria", "gastos", "", "fecha", "desc");
 ?>

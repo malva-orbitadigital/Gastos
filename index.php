@@ -7,14 +7,8 @@ include_once 'inc_pie.php';
     <h3>Bienvenido a mi contabilidad doméstica.</h3>
     <p>Actualmente hay 
         <?php 
-    
-        $connection = ConexionBD::conectar();
-        $stmt = $connection->prepare("SELECT count(*) FROM gastos");
-        $stmt->execute();
-        $stmt->bindColumn(1, $total);
-        $stmt->fetch();
+        $total = Gastos::getNumGastos();
         echo $total;
-
         ?>
         anotaciones.</p>
 </div>

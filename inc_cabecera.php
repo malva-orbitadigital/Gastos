@@ -45,39 +45,6 @@ function dateFormat(string $date){
     return implode('-', $aux);
 }
 
-//TODO: añadir total
-//TODO: paginación
-//TODO: return
-//TODO: documentacion
-//TODO: clases
-//TODO: delete
-function mostrarLista(string $query){
-    $categories = ['fecha' => 'Fecha', 'descripcion' => 'Descripción', 'importe' => 'Importe', 'categoria' => 'Categoría'];
-    echo '<table class="table">';
-    echo '<thead><tr>';
-    $connection = ConexionBD::conectar();
-    $stmt = $connection->prepare($query);
-    $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_NAMED);
-    $data = $stmt->fetchAll();
-    foreach($data[0] as $category => $value){
-        echo $category !== 'id' ? "<th scope='col'>".$categories[$category]."</th>" : "";
-    }
-    echo "<th scope='col'></th>";
-    echo '</tr></thead>';
-    echo '<tbody>';
-    foreach($data as $row){
-        echo "<tr>";
-        foreach($row as $name => $col){
-            echo $name !== 'id' ? 
-                $name === 'fecha' ? "<td>".dateFormat($col)."</td>" : "<td>$col</td>" 
-            : "<td><a href='modificar.php?id=$col'
-            class='btn btn-outline-secondary'>Modificar</a></td>";
-        }
-        echo "</tr>";
-    }
-    echo '</tbody></table>';
-}
 
 
 

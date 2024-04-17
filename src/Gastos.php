@@ -4,6 +4,12 @@ include_once 'ConexionBD.php';
 class Gastos {
 
 
+    static public function getNumGastos() {
+        $datos = ConexionBD::select("count(*)", "gastos", "", "", "");
+        return $datos[0]['count(*)'];
+    }
+
+
     //TODO: revisar posible error
 
     static function insertGasto(string $date, float $quantity, string $description, string $category){
@@ -11,7 +17,8 @@ class Gastos {
             $connection = ConexionBD::conectar();
             $sql = ("INSERT INTO gastos (fecha, importe, descripcion, categoria)
                     VALUES ('$date', '$quantity', '$description', '$category')");
-            $connection->exec($sql);
+            $result = $connection->exec($sql);
+            // if ($result === false) throw new Exception
             return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
         } catch (PDOException $e){
             echo $e;
@@ -35,35 +42,34 @@ class Gastos {
         
     //TODO: añadir total
     //TODO: paginación
-    //TODO: return
     //TODO: documentacion
-    //TODO: clases
     //TODO: delete
-    static function mostrarLista(string $query){
+    static function mostrarLista(string $select, string $from, string $where, string $orderBy, string $orderHow){
+        $html = '<table class="table"><thead><tr>';
         $categories = ['fecha' => 'Fecha', 'descripcion' => 'Descripción', 'importe' => 'Importe', 'categoria' => 'Categoría'];
-        echo '<table class="table">';
-        echo '<thead><tr>';
-        $connection = ConexionBD::conectar();
-        $stmt = $connection->prepare($query);
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_NAMED);
-        $data = $stmt->fetchAll();
-        foreach($data[0] as $category => $value){
-            echo $category !== 'id' ? "<th scope='col'>".$categories[$category]."</th>" : "";
+        $data = ConexionBD::select($select, $from, $where, $orderBy, $orderHow);
+
+        if (count($data) === 0){
+            return "No hay resultados";
         }
-        echo "<th scope='col'></th>";
-        echo '</tr></thead>';
-        echo '<tbody>';
+        
+        foreach($data[0] as $category => $value){
+            $html .= $category !== 'id' ? "<th scope='col'>".$categories[$category]."</th>" : "";
+        }
+        $html .= "<th scope='col'></th>";
+        $html .= '</tr></thead>';
+        $html .= '<tbody>';
         foreach($data as $row){
-            echo "<tr>";
+            $html .= "<tr>";
             foreach($row as $name => $col){
-                echo $name !== 'id' ? 
+                $html .= $name !== 'id' ? 
                     $name === 'fecha' ? "<td>".dateFormat($col)."</td>" : "<td>$col</td>" 
                 : "<td><a href='modificar.php?id=$col'
                 class='btn btn-outline-secondary'>Modificar</a></td>";
             }
-            echo "</tr>";
+            $html .= "</tr>";
         }
-        echo '</tbody></table>';
+        $html .= '</tbody></table>';
+        return $html;
     }
 }

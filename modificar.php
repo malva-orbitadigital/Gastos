@@ -2,14 +2,8 @@
 include_once 'inc_cabecera.php';
 include_once 'inc_pie.php';
 
-
 function getElem(){
-    $id = $_GET['id'];
-    $connection = ConexionBD::conectar();
-    $stmt = $connection->prepare("SELECT * FROM gastos WHERE id = $id");
-    $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_NAMED);
-    return $stmt->fetchAll()[0];
+    
 }
 
 if (isset($_POST['save'])){
@@ -17,7 +11,7 @@ if (isset($_POST['save'])){
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    $saved = Gastos::updateGasto($date, $quantity, $description, $category, $_GET['id']);
+    $saved = Gastos::updateGasto("$date", $quantity, $description, $category, $_GET['id']);
     $data = getElem();
 } else {
     unset($saved);
