@@ -4,7 +4,7 @@ include_once 'ConexionBD.php';
 class Gastos {
 
 
-    static public function getNumGastos() {
+    static public function getNumGastos() : int{
         $datos = ConexionBD::select("count(*)", "gastos", "", "", "");
         return $datos[0]['count(*)'];
     }
@@ -14,7 +14,7 @@ class Gastos {
 
     static function insertGasto(string $date, float $quantity, string $description, string $category){
         try {
-            $connection = ConexionBD::conectar();
+            $connection = ConexionBD::connect();
             $sql = ("INSERT INTO gastos (fecha, importe, descripcion, categoria)
                     VALUES ('$date', '$quantity', '$description', '$category')");
             $result = $connection->exec($sql);
@@ -28,7 +28,7 @@ class Gastos {
 
     static function updateGasto(string $date, float $quantity, string $description, string $category, int $id){
         try {
-            $connection = ConexionBD::conectar();
+            $connection = ConexionBD::connect();
             $sql = "UPDATE gastos 
                     SET fecha='$date', importe='$quantity', descripcion='$description', categoria='$category'
                     WHERE id='$id'";
@@ -44,17 +44,16 @@ class Gastos {
     //TODO: paginación
     //TODO: documentacion
     //TODO: delete
-    static function mostrarLista(string $select, string $from, string $where, string $orderBy, string $orderHow){
+    static function mostrarLista(string $select, string $from, string $where, string $orderBy, string $orderHow) : string{
         $html = '<table class="table"><thead><tr>';
-        $categories = ['fecha' => 'Fecha', 'descripcion' => 'Descripción', 'importe' => 'Importe', 'categoria' => 'Categoría'];
         $data = ConexionBD::select($select, $from, $where, $orderBy, $orderHow);
-
+        
         if (count($data) === 0){
             return "No hay resultados";
         }
         
-        foreach($data[0] as $category => $value){
-            $html .= $category !== 'id' ? "<th scope='col'>".$categories[$category]."</th>" : "";
+        foreach($data[0] as $head => $value){
+            $html .= $head !== 'id' ? "<th scope='col'>".ucfirst($head)."</th>" : "";
         }
         $html .= "<th scope='col'></th>";
         $html .= '</tr></thead>';
@@ -62,10 +61,18 @@ class Gastos {
         foreach($data as $row){
             $html .= "<tr>";
             foreach($row as $name => $col){
-                $html .= $name !== 'id' ? 
-                    $name === 'fecha' ? "<td>".dateFormat($col)."</td>" : "<td>$col</td>" 
-                : "<td><a href='modificar.php?id=$col'
-                class='btn btn-outline-secondary'>Modificar</a></td>";
+                if ($name !== 'id'){
+                    if ($name === 'fecha'){
+                        $html .= "<td>".dateFormat($col)."</td>";
+                    } else if($name === 'importe'){
+                        $html .= "<td>".$col."€</td>";
+                    } else {
+                        $html .= "<td>$col</td>";
+                    }
+                } else {
+                    $html .= "<td><a href='modificar.php?id=$col'
+                    class='btn btn-outline-secondary'>Modificar</a></td>";
+                }
             }
             $html .= "</tr>";
         }

@@ -7,7 +7,7 @@ class ConexionBD{
     static private $dbname = "contab";
 
     //TODO: por qué no hay que recargar
-    public static function conectar() : PDO{
+    public static function connect() : PDO{
         try {
             $conn = new PDO("mysql:host=".self::$servername.";dbname=".self::$dbname, self::$username);
         } catch(PDOException $e) {
@@ -16,8 +16,8 @@ class ConexionBD{
         return $conn;
     }
 
-    public static function select(string $select, string $from, string $where, string $orderBy, string $orderHow) : array{
-        $connection = ConexionBD::conectar();
+    public static function select(string $select, string $from, string $where, string $orderBy, string $orderHow){
+        $connection = ConexionBD::connect();
 
         if ($from === '') return "Param error";
     

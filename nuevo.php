@@ -43,8 +43,8 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
             <select id="category" name="category" class="form-select" required>
                 <option value="">Selecciona una categoría...</option>
                 <?php
-                foreach ($categories as $category => $name){
-                    echo "<option value=$category>$name</option>";
+                foreach (Categoria::getCategorias() as $category){
+                    echo "<option value=".$category['nombre'].">".ucfirst($category['nombre'])."</option>";
                 }
                 ?>
             </select>

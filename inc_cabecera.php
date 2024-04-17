@@ -36,6 +36,7 @@
 <?php
 include_once './src/ConexionBD.php';
 include_once './src/Gastos.php';
+include_once './src/Categoria.php';
 
 $categories = ['ocio'=>'Ocio', 'trabajo'=>'Trabajo', 'telefono'=>'Teléfono', 'compra'=>'Compra',
                 'alquiler'=>'Alquiler', 'otro'=>'Otro'];
