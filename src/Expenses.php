@@ -55,18 +55,11 @@ class Expenses {
         return $html;
     }
 
-    static function insertExpense(string $date, float $quantity, string $description, string $category){
-        try {
-            $connection = ConexionBD::connect();
-            $sql = ("INSERT INTO gastos (fecha, importe, descripcion, categoria)
-                    VALUES ('$date', '$quantity', '$description', '$category')");
-            $result = $connection->exec($sql);
-            // if ($result === false) throw new Exception
-            return ["text" => "Anotación añadida correctamente", "bgcolor" => "success"];
-        } catch (PDOException $e){
-            echo $e;
-            return ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
-        }
+    public static function addExpense (string $date, float $quantity, string $description, string $category) : array{
+        return ConexionBD::insert("gastos", ["fecha", "importe", "descripcion", "categoria"], 
+        compact('date', 'quantity', 'description', 'category')) ? 
+        ["text" => "La anotación se ha añadido correctamente", "bgcolor" => "success"] : 
+        ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
     }
 
     static function updateExpense(string $date, float $quantity, string $description, string $category, int $id){

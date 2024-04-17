@@ -2,7 +2,7 @@
 
 class ConexionBD{
     //TODO: una instancia
-    
+
     static private $servername = "localhost";
     static private $username = "root";
     static private $dbname = "contab";
@@ -40,5 +40,24 @@ class ConexionBD{
         }
 
         return $data;
+    }
+
+    static function insert(string $table, array $columns, array $values){
+        $connection = ConexionBD::connect();
+
+        if ($table === '' || empty($values)) return "Param error";
+
+        $query = "INSERT INTO $table ";
+        if (!empty($columns)) $query .= "(".implode(',', $columns).") ";
+        $query .= "VALUES ('".implode("','", $values)."')";
+
+        // return $query;
+
+        try {
+            $stmt = $connection->prepare($query);
+            return $stmt->execute();            
+        } catch (PDOException $e){
+            die($e);
+        }
     }
 }
