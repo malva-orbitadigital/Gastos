@@ -69,7 +69,6 @@ class Expenses {
         ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
 
-
     static function dateFormat(string $date){
         $aux = array_reverse(explode('-', $date));
         return implode('-', $aux);

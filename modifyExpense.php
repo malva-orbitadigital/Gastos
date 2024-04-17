@@ -44,7 +44,7 @@ echo isset($saved) ? "
             <select id="category" name="category" class="form-select" required>
                 <option value="">Selecciona una categoría...</option>
                 <?php
-                foreach (Category::getCategories() as $category){
+                foreach (Category::getCategories("", "categorias", "", "", "") as $category){
                     echo "<option value=".$category['id'];
                     echo $category['nombre'] === $data['categoria'] ? " selected>" : ">";
                     echo ucfirst($category['nombre'])."</option>";

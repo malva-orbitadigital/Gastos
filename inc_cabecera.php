@@ -21,7 +21,10 @@
                     <a class="nav-link" href="search.php">Buscar</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="listExpenses.php">Listado</a>
+                    <a class="nav-link" href="listExpenses.php">Gastos</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="categories.php">Categorías</a>
                     </li>
                     <li class="nav-item">
                     <a class="nav-link" href="addExpense.php">Nuevo</a>
