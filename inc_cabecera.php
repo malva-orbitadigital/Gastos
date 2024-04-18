@@ -24,7 +24,7 @@
                     <a class="nav-link" href="listExpenses.php">Gastos</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="categories.php">Categorías</a>
+                    <a class="nav-link" href="CRUDcategories.php">Categorías</a>
                     </li>
                     <li class="nav-item">
                     <a class="nav-link" href="addExpense.php">Nuevo</a>

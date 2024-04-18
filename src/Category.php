@@ -6,7 +6,7 @@ class Category {
     private static $table = "categorias";
     
     /**
-     * Get category
+     * Get one category
      *
      * @param int $id
      * 
@@ -16,14 +16,29 @@ class Category {
         return ConnectionDB::select("", self::$table, "", "id = ".$id, "", "");
     }
 
-    static public function getCategories(string $select, string $from, string $where, string $orderBy, string $orderHow) : array{
-        $datos = ConnectionDB::select($select, $from, "", $where, $orderBy, $orderHow);
+    /**
+     * @param string $select columns to select (empty selects all columns)
+     * @param string $join join statement/s
+     * @param string $where posible conditions
+     * @param string $orderBy posible column to order by
+     * @param string $orderHow asc/desc
+     * 
+     * @return array query in an associative array
+     */
+    static public function getCategories(string $select, string $join, string $where, string $orderBy, string $orderHow) : array{
+        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow);
         return $datos;
     }
 
-    static public function showCategories(){
+    /**
+     * Creates a table with the categories
+     * 
+     * @param array $data
+     * 
+     * @return string code html of the table
+     */
+    static public function showCategories($data){
         $html = '<table class="table"><thead><tr>';
-        $data = self::getCategories("", "categorias", "", "", "");
 
         if (empty($data)) return "No hay categorías";
         
@@ -43,11 +58,12 @@ class Category {
                 }
                 $html .= "<td>".ucfirst($col)."</td>";
                 if ($name === $last_key){
-                    $html .= "<td><a href='categories.php?id=".$row['id']."'
+                    $html .= "<td><a href='CRUDcategories.php?id=".$row['id']."'
                     class='btn btn-outline-secondary'>Modificar</a></td>
-                    <td><a href='categories.php?id=".$row['id']."&action=delete'
+                    <td><a href='CRUDcategories.php?id=".$row['id']."&action=delete'
                     class='btn btn-outline-danger'>Eliminar</a></td>";
                 } 
+                //TODO: generalizar botones
             }
             $html .= "</tr>";
         }
@@ -55,16 +71,34 @@ class Category {
         return $html;
     }
 
+    /**
+     * @param string $name
+     * @param string $descripcion
+     * 
+     * @return 
+     */
     public static function addCategory(string $name, string $description) : bool{
         return ConnectionDB::insert("categorias", ["nombre", "descripcion"], 
         compact('name', 'description'));
     }
 
+    /**
+     * @param string $name
+     * @param string $descripcion
+     * @param string $id
+     * 
+     * @return 
+     */
     public static function updateCategory(string $name, string $description, int $id) : bool{
         return ConnectionDB::update("categorias",
         ["nombre"=>$name, "descripcion"=>$description], "id = $id");
     }
 
+    /**
+     * @param integer $id
+     * 
+     * @return 
+     */
     public static function deleteCategory(int $id) {
         return ConnectionDB::delete(self::$table, "id = $id");
     }

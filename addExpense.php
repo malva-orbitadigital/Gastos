@@ -54,6 +54,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     </form>
 </div>
 <?php
-echo Expenses::showExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", 
-"gastos inner join categorias on gastos.categoria = categorias.id", "", "fecha", "desc", false);
+$data = Expenses::getExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", 
+"gastos inner join categorias on gastos.categoria = categorias.id", "", "fecha", "desc");
+echo Expenses::showExpenses($data, false);
 ?>

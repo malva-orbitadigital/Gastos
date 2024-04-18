@@ -12,20 +12,22 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
         $alert = 'No se ha podido añadir la categoría';
 } else if(isset($_POST['modify'])) {
     if(!Category::updateCategory($_POST['name'], $_POST['description'], $_GET['id']))
-        $alert = "no se ha podido modificar la categoría";
+        $alert = "No se ha podido modificar la categoría";
     $save = false;
 }
 
 if (isset($_GET['id'])){
     if (isset($_GET['action'])){
         $result = (Category::deleteCategory($_GET['id']));
-        if (isset($result['error'])) $alert = $result['error'];
+        if (isset($result['error'])) $alert = "Esta categoría tiene gastos asociados";
         $save = true;
     } else {
         $data = Category::getCategory($_GET['id'])[0];
         $save = false;
     }
-} 
+}
+
+$categories = Category::getCategories('','','','','');
 
 $rand=rand();
 $_SESSION['rand']=$rand;
@@ -33,7 +35,7 @@ $_SESSION['rand']=$rand;
 
 echo "<h3 class='text-center m-3'>Categorías</h3>";
 
-echo Category::showCategories();
+echo Category::showCategories($categories);
 echo "<hr class='m-5'/>";
 
 if (isset($alert)){
@@ -57,7 +59,7 @@ if (isset($alert)){
         <?php
             echo $save ? '<button name="save" type="submit" class="btn btn-primary">Guardar</button>'
             : '<button name="modify" type="submit" class="btn btn-primary">Actualizar</button>
-            <a href="categories.php" class="mt-5 btn btn-primary mb-5">Nueva categoría</a>';
+            <a href="CRUDcategories.php" class="mt-5 btn btn-primary mb-5">Nueva categoría</a>';
         ?>
     </form>
 </div>

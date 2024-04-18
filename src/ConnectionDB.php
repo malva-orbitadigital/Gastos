@@ -7,6 +7,12 @@ class ConnectionDB{
     static private $dbname = "contab";
 
     //TODO: por qué no hay que recargar
+
+    /**
+     * Connects to database
+     * 
+     * @return PDO
+     */
     public static function connect() : PDO{
         try {
             $conn = new PDO("mysql:host=".self::$servername.";dbname=".self::$dbname, self::$username);
@@ -16,7 +22,18 @@ class ConnectionDB{
         return $conn;
     }
 
-    // TODO adaptar join
+    /**
+     * Executes a select
+     * 
+     * @param string $select columns to select (empty selects all columns)
+     * @param string $table 
+     * @param string $join join statement/s
+     * @param string $where posible conditions
+     * @param string $orderBy posible column to order by
+     * @param string $orderHow asc/desc
+     * 
+     * @return array query in an associative array
+     */
     public static function select(string $select, string $table, string $join, string $where, string $orderBy, string $orderHow) : array{
         $connection = ConnectionDB::connect();
 
@@ -30,7 +47,7 @@ class ConnectionDB{
             $query .= " ORDER BY $orderBy "; 
             $orderHow === 'desc' ? $query .= "DESC" : $query .= "ASC";
         }
-        
+
         try{
             $stmt = $connection->prepare($query);
             $stmt->execute();
@@ -43,6 +60,15 @@ class ConnectionDB{
         return $data;
     }
 
+    /**
+     * Inserts into table
+     * 
+     * @param string $table
+     * @param array $columns
+     * @param array $values
+     * 
+     * @return bool|array
+     */
     static function insert(string $table, array $columns, array $values){
         $connection = ConnectionDB::connect();
 
@@ -56,19 +82,28 @@ class ConnectionDB{
             $stmt = $connection->prepare($query);
             return $stmt->execute();            
         } catch (PDOException $e){
-            die($e);
+            return ['error' => $e->getMessage()];
         }
     }
 
-    static function update(string $table, array $set, string $where){
+    /**
+     * Updates a column from a table
+     * 
+     * @param string $table
+     * @param array $update columns with the new values
+     * @param string $where condition
+     * 
+     * @return bool|array
+     */
+    static function update(string $table, array $update, string $where){
         $connection = ConnectionDB::connect();
 
-        if ($table === '' || empty($set)) return "Param error";
+        if ($table === '' || empty($update)) return "Param error";
 
         $query = "UPDATE $table SET ";
 
         $d = [];
-        foreach ($set as $column => $value){
+        foreach ($update as $column => $value){
             $d[] = $column." = '".$value."' ";
         }
 
@@ -80,25 +115,37 @@ class ConnectionDB{
             $stmt = $connection->prepare($query);
             return $stmt->execute();            
         } catch (PDOException $e){
-            die($e);
+            return ['error' => $e->getMessage()];
         }
     }
 
-    static function delete(string $table, string $where) : bool{
+    /**
+     * Deteles a column
+     * 
+     * @param string $table
+     * @param string $where condition 
+     * 
+     */
+    static function delete(string $table, string $where) {
         if (empty($table) || empty($where)) return "Param error";
 
         $connection = ConnectionDB::connect();
 
         try {
-            // $stmt = $connection->prepare("DELETE FROM $table WHERE $where");
-            // return $stmt->execute(); 
             return $connection->exec("DELETE FROM $table WHERE $where");
         } catch (PDOException $e){
             return ['error' => $e->getMessage()];
         }
     }
 
-    static function getTotalRegister(string $table){
+    /**
+     * Executes a select count(*) of a table
+     * 
+     * @param string $table
+     * 
+     * @return int 
+     */
+    static function getTotalRegister(string $table) : int{
         $datos = self::select("count(*) as total", $table, "", "", "", "");
         return $datos[0]['total'] ?? 0;
     }

@@ -15,8 +15,6 @@ class Expenses {
     }
 
     /**
-     * Get expenses
-     *
      * @param int $id
      *
      * @return array
@@ -26,12 +24,31 @@ class Expenses {
         self::$table, " inner join categorias AS c on ".self::$table.".categoria = c.id", self::$table.".id = $id", "", "");
         return $data[0] ?? []; // TODO falta algo respecto a la funcion ConnectionDB::select
     }
+
+    /**
+     * @param string $select columns to select (empty selects all columns)
+     * @param string $join join statement/s
+     * @param string $where posible conditions
+     * @param string $orderBy posible column to order by
+     * @param string $orderHow asc/desc
+     * 
+     * @return array query in an associative array
+     */
+    static public function getExpenses(string $select, string $join, string $where, string $orderBy, string $orderHow) : array{
+        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow);
+        return $datos;
+    }
    
-        
     //TODO: paginación
-    //TODO: documentacion
-    static function showExpenses(string $select, string $from, string $where, string $orderBy, string $orderHow, bool $actions) : string{
-        $data = ConnectionDB::select($select, $from, '', $where, $orderBy, $orderHow);
+    /**
+     * Creates a table with the expenses
+     * 
+     * @param array $data
+     * @param boolean $actions whether to create buttons or not
+     * 
+     * @param string $select 
+     */
+    static function showExpenses(array $data, bool $actions) : string{
         
         if (count($data) === 0){
             return "No hay resultados";
@@ -58,6 +75,7 @@ class Expenses {
                         case 'importe':
                             $html .= "<td>".$col."€</td>";
                             break;
+                            //TODO: text overflow descripcion
                         default:
                             $html .= "<td>".ucfirst($col)."</td>";
                     }
@@ -71,11 +89,22 @@ class Expenses {
         return $html;
     }
 
+    /**
+     * @return string html for total
+     */
     public static function showTotal(){
         return "<div class='m-5 text-center fs-4'><strong>Total</strong>: ".
         number_format(self::getTotal(), 2). "€</div>";
     }
 
+    /**
+     * @param string $date
+     * @param float $quantity
+     * @param string $descripcion
+     * @param integer $category
+     * 
+     * @return array
+     */
     public static function addExpense (string $date, float $quantity, string $description, string $category) : array{
         return ConnectionDB::insert(self::$table, ["fecha", "importe", "descripcion", "categoria"], 
         compact('date', 'quantity', 'description', 'category')) ? 
@@ -83,13 +112,27 @@ class Expenses {
         ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
     }
 
+    /**
+     * @param string $date
+     * @param float $quantity
+     * @param string $descripcion
+     * @param integer $category
+     * @param integer $id
+     * 
+     * @return array
+     */
     static function updateExpense(string $date, float $quantity, string $description, string $category, int $id) : array{
         return ConnectionDB::update(self::$table,
         ["fecha"=>$date, "importe"=>$quantity, "descripcion"=>$description, "categoria"=>$category], self::$table.".id LIKE $id") ? 
         ["text" => "La anotación se ha modificado correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
-
+    
+    /**
+     * @param integer $id
+     * 
+     * @return 
+     */
     static function deleteExpense(int $id){
         if(ConnectionDB::delete(self::$table, "id LIKE $id")){
             return true;
@@ -98,10 +141,20 @@ class Expenses {
         return false;
     }
 
+    /**
+     * Calculates the total of expenses
+     * 
+     * @return float
+     */
     private static function getTotal() : float{
-        return ConnectionDB::select('sum(importe) as total',self::$table, '','','','')[0]['total'];
+        return ConnectionDB::select('sum(importe) as total',self::$table, '','','','')[0]['total'] ?? 0;
     }
-
+    
+    /**
+     * @param string $date in format YYYY-MM-DD
+     * 
+     * @return string date in format DD-MM-YYYY
+     */
     static function dateFormat(string $date): string{
         $aux = array_reverse(explode('-', $date));
         return implode('-', $aux);

@@ -14,7 +14,8 @@ include_once 'inc_pie.php';
     <?php
     if (isset($_POST['busqueda'])){
         $input = $_POST['busqueda'];
-        echo Expenses::showExpenses("fecha, importe, id", "gastos", "descripcion LIKE '%$input%'", "fecha", "desc", true);
+        $data = Expenses::getExpenses("fecha, importe, id", "gastos", "descripcion LIKE '%$input%'", "fecha", "desc", -1, -1);
+        echo Expenses::showExpenses($data, true);
     }
     ?>
 </div>
