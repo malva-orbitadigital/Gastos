@@ -46,26 +46,25 @@ class Expenses {
         $html .= '<tbody>';
         foreach($data as $row){
             $html .= "<tr>";
+            $buttons = "<td><a href='modifyExpense.php?id=".$row['id']."'
+                class='btn btn-outline-secondary'>Modificar</a></td>
+                <td><a href='listExpenses.php?id=".$row['id']."' class='btn btn-outline-danger'>Eliminar</a></td>";
             foreach($row as $name => $col){
-
-                switch($name){
-                    case 'id': //TODO: mirar
-                        if ($actions){
-                            $html .= "<td><a href='modifyExpense.php?id=$col'
-                            class='btn btn-outline-secondary'>Modificar</a></td>
-                            <td><a href='listExpenses.php?id=$col' class='btn btn-outline-danger'>Eliminar</a></td>";
-                        }
-                        break;
-                    case 'fecha':
-                        $html .= "<td>".self::dateFormat($col)."</td>";
-                        break;
-                    case 'importe':
-                        $html .= "<td>".$col."€</td>";
-                        break;
-                    default:
-                        $html .= "<td>".ucfirst($col)."</td>";
+                if ($name !== 'id'){       
+                    switch($name){
+                        case 'fecha':
+                            $html .= "<td>".self::dateFormat($col)."</td>";
+                            break;
+                        case 'importe':
+                            $html .= "<td>".$col."€</td>";
+                            break;
+                        default:
+                            $html .= "<td>".ucfirst($col)."</td>";
+                    }
                 }
             }
+            if ($actions) $html .= $buttons;
+
             $html .= "</tr>";
         }
         $html .= '</tbody></table>';
@@ -93,10 +92,10 @@ class Expenses {
 
     static function deleteExpense(int $id){
         if(ConnectionDB::delete(self::$table, "id LIKE $id")){
-            return ["text" => "La anotación se ha eliminado correctamente", "bgcolor" => "success"];
+            return true;
         }
 
-        return ["text" => "No se ha podido eliminar la anotación", "bgcolor" => "danger"];
+        return false;
     }
 
     private static function getTotal() : float{

@@ -14,7 +14,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
 }
 
 if (isset($_GET['id'])){
-    $data = Category::getCategories("", "categorias", "id LIKE ".$_GET['id'], "", "")[0];
+    $data = Category::getCategory($_GET['id'])[0];
     $save = false;
 } 
 
@@ -28,7 +28,7 @@ echo Category::showCategories();
 echo "<hr class='m-5'/>";
 
 echo isset($saved) ? "
-<p class='bg-".$saved['bgcolor']." text-center text-white mt-5 p-3'>".$saved['text']."</p>
+<p class='bg-danger text-center text-white mt-5 p-3'>No se ha podido modificar la categoría</p>
 " : "";
 
 ?>
@@ -46,7 +46,7 @@ echo isset($saved) ? "
         </div>
         <input type="hidden" value="<?php echo $rand; ?>" name="randcheck" />
         <?php
-            echo $save ? '<button name="save" type="submit" class="btn btn-primary">Guardar</button>'
+            echo !$save ? '<button name="save" type="submit" class="btn btn-primary">Guardar</button>'
             : '<button name="modify" type="submit" class="btn btn-primary">Actualizar</button>
             <a href="categories.php" class="mt-5 btn btn-primary mb-5">Nueva categoría</a>';
         ?>

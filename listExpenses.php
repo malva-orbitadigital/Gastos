@@ -11,12 +11,15 @@ function showList(){
 
 echo '<div class="mt-5">';
 
-    if (isset($_GET['id']) && is_numeric($_GET['id'])){
-        $result = Expenses::deleteExpense($_GET['id']);
+    if (isset($_GET['id'])){
+        if (!is_numeric($_GET['id'])){
+            $result = false;
+        } else {
+            $result = Expenses::deleteExpense($_GET['id']);
+        }
 
-        echo isset($result) ? "
-        <p class='bg-".$result['bgcolor']." text-center text-white mt-5 p-3'>".$result['text']."</p>
-        " : "";
+        echo !$result ? "
+        <p class='bg-danger text-center text-white mt-5 p-3'>'No se ha podido eliminar la anotación'</p>" : "";
     }
     showList();
 echo "</div>";

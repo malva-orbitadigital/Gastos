@@ -84,16 +84,17 @@ class ConnectionDB{
         }
     }
 
-    static function delete(string $table, string $where){
+    static function delete(string $table, string $where) : bool{
         if (empty($table) || empty($where)) return "Param error";
 
         $connection = ConnectionDB::connect();
 
         try {
-            $stmt = $connection->prepare("DELETE FROM $table WHERE $where");
-            return $stmt->execute();            
+            // $stmt = $connection->prepare("DELETE FROM $table WHERE $where");
+            // return $stmt->execute(); 
+            return $connection->exec("DELETE FROM $table WHERE $where");
         } catch (PDOException $e){
-            die($e);
+            return ['error' => $e->getMessage()];
         }
     }
 

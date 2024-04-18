@@ -36,13 +36,14 @@ class Category {
             $keys = array_keys($row);
             $last_key = end($keys);
             foreach($row as $name => $col){
-                if ($name !== 'id'){
-                    $html .= "<td>".ucfirst($col)."</td>";
-                    if ($name === $last_key){
-                        $html .= "<td><a href='categories.php?id=".$row['id']."'
-                        class='btn btn-outline-secondary'>Modificar</a></td>";
-                    } 
+                if ($name == 'id'){
+                    continue;
                 }
+                $html .= "<td>".ucfirst($col)."</td>";
+                if ($name === $last_key){
+                    $html .= "<td><a href='categories.php?id=".$row['id']."'
+                    class='btn btn-outline-secondary'>Modificar</a></td>";
+                } 
             }
             $html .= "</tr>";
         }
@@ -50,18 +51,14 @@ class Category {
         return $html;
     }
 
-    public static function addCategory(string $name, string $description) : array{
+    public static function addCategory(string $name, string $description) : bool{
         return ConnectionDB::insert("categorias", ["nombre", "descripcion"], 
-        compact('name', 'description')) ? 
-        ["text" => "La categoría se ha añadido correctamente", "bgcolor" => "success"] : 
-        ["text" => "No se ha podido añadir la categoría", "bgcolor" => "danger"];
+        compact('name', 'description'));
     }
 
-    public static function updateCategory(string $name, string $description, int $id) : array{
+    public static function updateCategory(string $name, string $description, int $id) : bool{
         return ConnectionDB::update("categorias",
-        ["nombre"=>$name, "descripcion"=>$description], "id LIKE $id") ? 
-        ["text" => "La categoría se ha modificado correctamente", "bgcolor" => "success"] : 
-        ["text" => "No se ha podido modificar la categoría", "bgcolor" => "danger"];
+        ["nombre"=>$name, "descripcion"=>$description], "id LIKE $id");
     }
 
 }
