@@ -1,29 +1,28 @@
 <?php
-include_once 'ConexionBD.php';
+include_once 'ConnectionDB.php';
 
 class Expenses {
 
 
     static public function getNumExpenses() : int{
-        $datos = ConexionBD::select("count(*)", "gastos", "", "", "");
+        $datos = ConnectionDB::select("count(*)", "gastos", "", "", "");
         return $datos[0]['count(*)'];
     }
 
 
     static public function getExpense($id) {
-        $data = ConexionBD::select("fecha, importe, gastos.descripcion, categorias.nombre as categoria", 
+        $data = ConnectionDB::select("fecha, importe, gastos.descripcion, categorias.nombre as categoria", 
         "gastos inner join categorias on gastos.categoria = categorias.id", "gastos.id LIKE $id", "", "");
         return $data[0];
     }
    
         
-    //TODO: añadir total
     //TODO: paginación
     //TODO: documentacion
     //TODO: delete
     static function showExpenses(string $select, string $from, string $where, string $orderBy, string $orderHow) : string{
         $html = '<table class="table"><thead><tr>';
-        $data = ConexionBD::select($select, $from, $where, $orderBy, $orderHow);
+        $data = ConnectionDB::select($select, $from, $where, $orderBy, $orderHow);
         
         if (count($data) === 0){
             return "No hay resultados";
@@ -61,21 +60,21 @@ class Expenses {
     }
 
     public static function addExpense (string $date, float $quantity, string $description, string $category) : array{
-        return ConexionBD::insert("gastos", ["fecha", "importe", "descripcion", "categoria"], 
+        return ConnectionDB::insert("gastos", ["fecha", "importe", "descripcion", "categoria"], 
         compact('date', 'quantity', 'description', 'category')) ? 
         ["text" => "La anotación se ha añadido correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
     }
 
     static function updateExpense(string $date, float $quantity, string $description, string $category, int $id) : array{
-        return ConexionBD::update("gastos",
+        return ConnectionDB::update("gastos",
         ["fecha"=>$date, "importe"=>$quantity, "descripcion"=>$description, "categoria"=>$category], "gastos.id LIKE $id") ? 
         ["text" => "La anotación se ha modificado correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
 
     private static function getTotal() : float{
-        return ConexionBD::select('sum(importe) as total','gastos','','','')[0]['total'];
+        return ConnectionDB::select('sum(importe) as total','gastos','','','')[0]['total'];
     }
 
     static function dateFormat(string $date){

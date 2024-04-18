@@ -37,7 +37,7 @@
 </html>
 
 <?php
-include_once './src/ConexionBD.php';
+include_once './src/ConnectionDB.php';
 include_once './src/Expenses.php';
 include_once './src/Category.php';
 ?>

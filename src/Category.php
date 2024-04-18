@@ -1,10 +1,10 @@
 <?php
-include_once 'ConexionBD.php';
+include_once 'ConnectionDB.php';
 
 class Category {
     
     static public function getCategories(string $select, string $from, string $where, string $orderBy, string $orderHow) : array{
-        $datos = ConexionBD::select($select, $from, $where, $orderBy, $orderHow);
+        $datos = ConnectionDB::select($select, $from, $where, $orderBy, $orderHow);
         return $datos;
     }
 
@@ -38,14 +38,14 @@ class Category {
     }
 
     public static function addCategory(string $name, string $description) : array{
-        return ConexionBD::insert("categorias", ["nombre", "descripcion"], 
+        return ConnectionDB::insert("categorias", ["nombre", "descripcion"], 
         compact('name', 'description')) ? 
         ["text" => "La categoría se ha añadido correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido añadir la categoría", "bgcolor" => "danger"];
     }
 
     public static function updateCategory(string $name, string $description, int $id) : array{
-        return ConexionBD::update("categorias",
+        return ConnectionDB::update("categorias",
         ["nombre"=>$name, "descripcion"=>$description], "id LIKE $id") ? 
         ["text" => "La categoría se ha modificado correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido modificar la categoría", "bgcolor" => "danger"];

@@ -1,24 +1,25 @@
 <?php
 
-class ConexionBD{
-    //TODO: una instancia
+class ConnectionDB{
 
-    static private $servername = "localhost";
-    static private $username = "root";
-    static private $dbname = "contab";
+    private static $servername = "localhost";
+    private static $username = "root";
+    private static $dbname = "contab";
+    private static $conn;
 
-    //TODO: por qué no hay que recargar
-    public static function connect() : PDO{
-        try {
-            $conn = new PDO("mysql:host=".self::$servername.";dbname=".self::$dbname, self::$username);
-        } catch(PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
+    public static function getConnection(){
+        if (self::$conn == null){
+            try{
+                self::$conn = new PDO("mysql:host=".self::$servername.";dbname=".self::$dbname, self::$username);
+            } catch(PDOException $e) {
+                die("Connection failed: " . $e->getMessage());
+            }
         }
-        return $conn;
+        return self::$conn;
     }
 
     public static function select(string $select, string $from, string $where, string $orderBy, string $orderHow){
-        $connection = ConexionBD::connect();
+        $connection = ConnectionDB::getConnection();
 
         if ($from === '') return "Param error";
     
@@ -43,7 +44,7 @@ class ConexionBD{
     }
 
     static function insert(string $table, array $columns, array $values){
-        $connection = ConexionBD::connect();
+        $connection = ConnectionDB::getConnection();
 
         if ($table === '' || empty($values)) return "Param error";
 
@@ -60,7 +61,7 @@ class ConexionBD{
     }
 
     static function update(string $table, array $set, string $where){
-        $connection = ConexionBD::connect();
+        $connection = ConnectionDB::getConnection();
 
         if ($table === '' || empty($set)) return "Param error";
 
@@ -80,15 +81,4 @@ class ConexionBD{
             die($e);
         }
     }
-
-    // try {
-    //     $connection = ConexionBD::connect();
-    //     $sql = "UPDATE gastos 
-    //             SET fecha='$date', importe='$quantity', descripcion='$description', categoria='$category'
-    //             WHERE id='$id'";
-    //     $connection->exec($sql);
-    //     return ["text" => "Anotación modificada correctamente", "bgcolor" => "success"];
-    // } catch (PDOException $e){
-    //     return ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
-    // }
 }
