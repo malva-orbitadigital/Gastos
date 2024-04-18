@@ -19,8 +19,6 @@ class ConnectionDB{
     }
 
     public static function select(string $select, string $from, string $where, string $orderBy, string $orderHow){
-        $connection = ConnectionDB::getConnection();
-
         if ($from === '') return "Param error";
     
         if ($select === '') $select = '*';
@@ -32,7 +30,7 @@ class ConnectionDB{
         }
 
         try{
-            $stmt = $connection->prepare($query);
+            $stmt = self::$conn->prepare($query);
             $stmt->execute();
             $stmt->setFetchMode(PDO::FETCH_NAMED);
             $data = $stmt->fetchAll();
@@ -44,8 +42,6 @@ class ConnectionDB{
     }
 
     static function insert(string $table, array $columns, array $values){
-        $connection = ConnectionDB::getConnection();
-
         if ($table === '' || empty($values)) return "Param error";
 
         $query = "INSERT INTO $table ";
@@ -53,7 +49,7 @@ class ConnectionDB{
         $query .= "VALUES ('".implode("','", $values)."')";
 
         try {
-            $stmt = $connection->prepare($query);
+            $stmt = self::$conn->prepare($query);
             return $stmt->execute();            
         } catch (PDOException $e){
             die($e);
@@ -61,8 +57,6 @@ class ConnectionDB{
     }
 
     static function update(string $table, array $set, string $where){
-        $connection = ConnectionDB::getConnection();
-
         if ($table === '' || empty($set)) return "Param error";
 
         $query = "UPDATE $table SET ";
@@ -75,7 +69,7 @@ class ConnectionDB{
         if (!empty($where)) $query .= " WHERE ".$where;
 
         try {
-            $stmt = $connection->prepare($query);
+            $stmt = self::$conn->prepare($query);
             return $stmt->execute();            
         } catch (PDOException $e){
             die($e);

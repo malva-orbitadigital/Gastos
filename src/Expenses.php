@@ -3,23 +3,23 @@ include_once 'ConnectionDB.php';
 
 class Expenses {
 
+    static private $table = 'gastos';
 
     static public function getNumExpenses() : int{
-        $datos = ConnectionDB::select("count(*)", "gastos", "", "", "");
+        $datos = ConnectionDB::select("count(*)", self::$table, "", "", "");
         return $datos[0]['count(*)'];
     }
 
 
     static public function getExpense($id) {
-        $data = ConnectionDB::select("fecha, importe, gastos.descripcion, categorias.nombre as categoria", 
-        "gastos inner join categorias on gastos.categoria = categorias.id", "gastos.id LIKE $id", "", "");
+        $data = ConnectionDB::select("fecha, importe, ".self::$table.".descripcion, categorias.nombre as categoria", 
+        self::$table." inner join categorias on ".self::$table.".categoria = categorias.id", self::$table.".id LIKE $id", "", "");
         return $data[0];
     }
    
         
     //TODO: paginación
     //TODO: documentacion
-    //TODO: delete
     static function showExpenses(string $select, string $from, string $where, string $orderBy, string $orderHow) : string{
         $html = '<table class="table"><thead><tr>';
         $data = ConnectionDB::select($select, $from, $where, $orderBy, $orderHow);
@@ -31,7 +31,7 @@ class Expenses {
         foreach($data[0] as $head => $value){
             $html .= $head !== 'id' ? "<th scope='col'>".ucfirst($head)."</th>" : "";
         }
-        $html .= "<th scope='col'></th>";
+        $html .= "<th scope='col'></th><th scope='col'></th>";
         $html .= '</tr></thead>';
         $html .= '<tbody>';
         foreach($data as $row){
@@ -39,7 +39,8 @@ class Expenses {
             foreach($row as $name => $col){
                 if ($name === 'id'){
                     $html .= "<td><a href='modifyExpense.php?id=$col'
-                    class='btn btn-outline-secondary'>Modificar</a></td>";
+                    class='btn btn-outline-secondary'>Modificar</a></td>
+                    <td><btn class='btn btn-outline-danger'>Eliminar</btn></td>";
                 } else if ($name === 'fecha'){
                     $html .= "<td>".self::dateFormat($col)."</td>";
                 } else if($name === 'importe'){
@@ -60,21 +61,25 @@ class Expenses {
     }
 
     public static function addExpense (string $date, float $quantity, string $description, string $category) : array{
-        return ConnectionDB::insert("gastos", ["fecha", "importe", "descripcion", "categoria"], 
+        return ConnectionDB::insert(self::$table, ["fecha", "importe", "descripcion", "categoria"], 
         compact('date', 'quantity', 'description', 'category')) ? 
         ["text" => "La anotación se ha añadido correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido añadir la anotación", "bgcolor" => "danger"];
     }
 
     static function updateExpense(string $date, float $quantity, string $description, string $category, int $id) : array{
-        return ConnectionDB::update("gastos",
-        ["fecha"=>$date, "importe"=>$quantity, "descripcion"=>$description, "categoria"=>$category], "gastos.id LIKE $id") ? 
+        return ConnectionDB::update(self::$table,
+        ["fecha"=>$date, "importe"=>$quantity, "descripcion"=>$description, "categoria"=>$category], self::$table.".id LIKE $id") ? 
         ["text" => "La anotación se ha modificado correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
 
+    static function deleteExpense(int $id){
+        return ConnectionDB::delete(self::$table, "id LIKE $id");
+    }
+
     private static function getTotal() : float{
-        return ConnectionDB::select('sum(importe) as total','gastos','','','')[0]['total'];
+        return ConnectionDB::select('sum(importe) as total','self::$table','','','')[0]['total'];
     }
 
     static function dateFormat(string $date){
