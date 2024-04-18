@@ -8,10 +8,10 @@ if (isset($_POST['save'])){
     $quantity = $_POST['quantity'];
     $description = $_POST['description'];
     $category = $_POST['category'];
-    $saved = Expenses::updateExpense("$date", $quantity, $description, $category, $_GET['id']);
+    $result = Expenses::updateExpense("$date", $quantity, $description, $category, $_GET['id']);
     $data = Expenses::getExpense($_GET['id']);
 } else {
-    unset($saved);
+    unset($result);
 }
 
 $data = Expenses::getExpense($_GET['id']);
@@ -19,8 +19,8 @@ $data = Expenses::getExpense($_GET['id']);
 $rand=rand();
 $_SESSION['rand']=$rand;
 
-echo isset($saved) ? "
-<p class='bg-".$saved['bgcolor']." text-center text-white mt-5 p-3'>".$saved['text']."</p>
+echo isset($result) ? "
+<p class='bg-".$result['bgcolor']." text-center text-white mt-5 p-3'>".$result['text']."</p>
 " : "";
 ?>
 

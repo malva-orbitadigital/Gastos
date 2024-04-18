@@ -41,7 +41,7 @@ class Expenses {
                     if ($buttons){
                         $html .= "<td><a href='modifyExpense.php?id=$col'
                         class='btn btn-outline-secondary'>Modificar</a></td>
-                        <td><btn class='btn btn-outline-danger'>Eliminar</btn></td>";
+                        <td><a href='listExpenses.php?id=$col' class='btn btn-outline-danger'>Eliminar</a></td>";
                     }
                 } else if ($name === 'fecha'){
                     $html .= "<td>".self::dateFormat($col)."</td>";
@@ -76,11 +76,11 @@ class Expenses {
         ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
     }
 
-    // static function deleteExpense(int $id){
-    //     return ConnectionDB::delete(self::$table, "id LIKE $id") ? 
-    //     ["text" => "La anotación se ha eliminado correctamente", "bgcolor" => "success"] : 
-    //     ["text" => "No se ha podido eliminar la anotación", "bgcolor" => "danger"];
-    // }
+    static function deleteExpense(int $id){
+        return ConnectionDB::delete(self::$table, "id LIKE $id") ? 
+        ["text" => "La anotación se ha eliminado correctamente", "bgcolor" => "success"] : 
+        ["text" => "No se ha podido eliminar la anotación", "bgcolor" => "danger"];
+    }
 
     private static function getTotal() : float{
         return ConnectionDB::select('sum(importe) as total',self::$table,'','','')[0]['total'];
