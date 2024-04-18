@@ -97,4 +97,9 @@ class ConnectionDB{
         }
     }
 
+    static function getTotalRegister(string $table){
+        $datos = self::select("count(*) as total", $table, "", "", "", "");
+        return $datos[0]['total'] ?? 0;
+    }
+
 }

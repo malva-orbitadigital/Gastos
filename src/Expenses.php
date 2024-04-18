@@ -5,9 +5,13 @@ class Expenses {
 
     static private $table = 'gastos';
 
+    /**
+     * Get number of expenses
+     *
+     * @return int
+     */
     static public function getNumExpenses() : int{
-        $datos = ConnectionDB::select("count(*)", self::$table, "", "", "");
-        return $datos[0]['count(*)'];
+        return ConnectionDB::getTotalRegister(self::$table);
     }
 
     /**
