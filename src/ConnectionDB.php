@@ -2,23 +2,23 @@
 
 class ConnectionDB{
 
-    private static $servername = "localhost";
-    private static $username = "root";
-    private static $dbname = "contab";
-    private static $conn;
+    static private $servername = "localhost";
+    static private $username = "root";
+    static private $dbname = "contab";
 
-    public static function getConnection(){
-        if (self::$conn == null){
-            try{
-                self::$conn = new PDO("mysql:host=".self::$servername.";dbname=".self::$dbname, self::$username);
-            } catch(PDOException $e) {
-                die("Connection failed: " . $e->getMessage());
-            }
+    //TODO: por qué no hay que recargar
+    public static function connect() : PDO{
+        try {
+            $conn = new PDO("mysql:host=".self::$servername.";dbname=".self::$dbname, self::$username);
+        } catch(PDOException $e) {
+            die("Connection failed: " . $e->getMessage());
         }
-        return self::$conn;
+        return $conn;
     }
 
     public static function select(string $select, string $from, string $where, string $orderBy, string $orderHow){
+        $connection = ConnectionDB::connect();
+
         if ($from === '') return "Param error";
     
         if ($select === '') $select = '*';
@@ -30,7 +30,7 @@ class ConnectionDB{
         }
 
         try{
-            $stmt = self::$conn->prepare($query);
+            $stmt = $connection->prepare($query);
             $stmt->execute();
             $stmt->setFetchMode(PDO::FETCH_NAMED);
             $data = $stmt->fetchAll();
@@ -42,6 +42,8 @@ class ConnectionDB{
     }
 
     static function insert(string $table, array $columns, array $values){
+        $connection = ConnectionDB::connect();
+
         if ($table === '' || empty($values)) return "Param error";
 
         $query = "INSERT INTO $table ";
@@ -49,7 +51,7 @@ class ConnectionDB{
         $query .= "VALUES ('".implode("','", $values)."')";
 
         try {
-            $stmt = self::$conn->prepare($query);
+            $stmt = $connection->prepare($query);
             return $stmt->execute();            
         } catch (PDOException $e){
             die($e);
@@ -57,6 +59,8 @@ class ConnectionDB{
     }
 
     static function update(string $table, array $set, string $where){
+        $connection = ConnectionDB::connect();
+
         if ($table === '' || empty($set)) return "Param error";
 
         $query = "UPDATE $table SET ";
@@ -69,10 +73,11 @@ class ConnectionDB{
         if (!empty($where)) $query .= " WHERE ".$where;
 
         try {
-            $stmt = self::$conn->prepare($query);
+            $stmt = $connection->prepare($query);
             return $stmt->execute();            
         } catch (PDOException $e){
             die($e);
         }
     }
+
 }
