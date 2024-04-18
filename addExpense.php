@@ -43,7 +43,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
             <select id="category" name="category" class="form-select" required>
                 <option value="">Selecciona una categoría...</option>
                 <?php
-                foreach (Category::getCategories() as $category){
+                foreach (Category::getCategories('','categorias','','','') as $category){
                     echo "<option value=".$category['id'].">".ucfirst($category['nombre'])."</option>";
                 }
                 ?>
@@ -54,6 +54,6 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     </form>
 </div>
 <?php
-echo Expenses::showExpenses("fecha, descripcion, importe, categorias.nombre as categoria, gastos.id", 
+echo Expenses::showExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", 
 "gastos inner join categorias on gastos.categoria = categorias.id", "", "fecha", "desc");
 ?>

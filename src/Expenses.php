@@ -11,7 +11,7 @@ class Expenses {
 
 
     static public function getExpense($id) {
-        $data = ConexionBD::select("fecha, importe, descripcion, categorias.nombre as categoria", 
+        $data = ConexionBD::select("fecha, importe, gastos.descripcion, categorias.nombre as categoria", 
         "gastos inner join categorias on gastos.categoria = categorias.id", "gastos.id LIKE $id", "", "");
         return $data[0];
     }
