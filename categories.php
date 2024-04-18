@@ -32,7 +32,10 @@ echo isset($saved) ? "
 <p class='bg-".$saved['bgcolor']." text-center text-white mt-5 p-3'>".$saved['text']."</p>
 " : "";
 
+echo "<h3 class='text-center m-3'>Categorías</h3>";
+
 echo Category::showCategories();
+echo "<hr class='m-5'/>";
 
 ?>
 

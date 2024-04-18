@@ -8,5 +8,6 @@ include_once 'inc_pie.php';
     echo Expenses::showExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", 
     "gastos inner join categorias on gastos.categoria = categorias.id",
     "", "fecha", "desc");
+    echo Expenses::showTotal();
 ?>
 </div>

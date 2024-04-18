@@ -8,8 +8,6 @@ class Category {
         return $datos;
     }
 
-    //TODO: arreglar categorias
-
     static public function showCategories(){
         $html = '<table class="table"><thead><tr>';
         $data = self::getCategories("", "categorias", "", "", "");
@@ -46,7 +44,7 @@ class Category {
         ["text" => "No se ha podido añadir la categoría", "bgcolor" => "danger"];
     }
 
-    static function updateCategory(string $name, string $description, int $id) : array{
+    public static function updateCategory(string $name, string $description, int $id) : array{
         return ConexionBD::update("categorias",
         ["nombre"=>$name, "descripcion"=>$description], "id LIKE $id") ? 
         ["text" => "La categoría se ha modificado correctamente", "bgcolor" => "success"] : 

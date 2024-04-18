@@ -55,6 +55,11 @@ class Expenses {
         return $html;
     }
 
+    public static function showTotal(){
+        return "<div class='m-5 text-center fs-4'><strong>Total</strong>: ".
+        self::getTotal(). "€</div>";
+    }
+
     public static function addExpense (string $date, float $quantity, string $description, string $category) : array{
         return ConexionBD::insert("gastos", ["fecha", "importe", "descripcion", "categoria"], 
         compact('date', 'quantity', 'description', 'category')) ? 
@@ -67,6 +72,10 @@ class Expenses {
         ["fecha"=>$date, "importe"=>$quantity, "descripcion"=>$description, "categoria"=>$category], "gastos.id LIKE $id") ? 
         ["text" => "La anotación se ha modificado correctamente", "bgcolor" => "success"] : 
         ["text" => "No se ha podido modificar la anotación", "bgcolor" => "danger"];
+    }
+
+    private static function getTotal() : float{
+        return ConexionBD::select('sum(importe) as total','gastos','','','')[0]['total'];
     }
 
     static function dateFormat(string $date){
