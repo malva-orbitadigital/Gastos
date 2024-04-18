@@ -17,10 +17,6 @@ echo '<div class="mt-5">';
         echo isset($result) ? "
         <p class='bg-".$result['bgcolor']." text-center text-white mt-5 p-3'>".$result['text']."</p>
         " : "";
-
-        showList();
-
-    } else {
-        showList();
     }
+    showList();
 echo "</div>";

@@ -16,26 +16,28 @@ class ConnectionDB{
         return $conn;
     }
 
-    public static function select(string $select, string $from, string $where, string $orderBy, string $orderHow){
+    // TODO adaptar join
+    public static function select(string $select, string $table, string $join, string $where, string $orderBy, string $orderHow) : array{
         $connection = ConnectionDB::connect();
 
-        if ($from === '') return "Param error";
+        if ($table === '') return "Param error";
     
         if ($select === '') $select = '*';
-        $query = "SELECT $select FROM $from ";
-        if ($where !== '') $query .= "WHERE $where ";
-        if ($orderBy !== ''){
+        $query = "SELECT $select FROM $table ";
+        if (!empty($join)) $query .= $join." ";
+        if (!empty($where)) $query .= "WHERE $where ";
+        if (!empty($orderBy)){
             $query .= " ORDER BY $orderBy "; 
             $orderHow === 'desc' ? $query .= "DESC" : $query .= "ASC";
         }
-
+        
         try{
             $stmt = $connection->prepare($query);
             $stmt->execute();
             $stmt->setFetchMode(PDO::FETCH_NAMED);
             $data = $stmt->fetchAll();
         } catch(PDOException $e){
-            die($e);
+            $data = ['error' => $e->getMessage()];
         }
 
         return $data;
@@ -64,12 +66,14 @@ class ConnectionDB{
         if ($table === '' || empty($set)) return "Param error";
 
         $query = "UPDATE $table SET ";
-        $keys = array_keys($set);
-        $last_key = end($keys);
+
+        $d = [];
         foreach ($set as $column => $value){
-            $query .= $column." = '".$value."' ";
-            if ($column !== $last_key) $query.=", ";
+            $d[] = $column." = '".$value."' ";
         }
+
+        $query .= implode(',', $d);
+
         if (!empty($where)) $query .= " WHERE ".$where;
 
         try {
@@ -81,14 +85,12 @@ class ConnectionDB{
     }
 
     static function delete(string $table, string $where){
-        $connection = ConnectionDB::connect();
-        
         if (empty($table) || empty($where)) return "Param error";
 
-        $query = "DELETE FROM $table WHERE $where";
+        $connection = ConnectionDB::connect();
 
         try {
-            $stmt = $connection->prepare($query);
+            $stmt = $connection->prepare("DELETE FROM $table WHERE $where");
             return $stmt->execute();            
         } catch (PDOException $e){
             die($e);

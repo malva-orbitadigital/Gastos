@@ -2,9 +2,22 @@
 include_once 'ConnectionDB.php';
 
 class Category {
+
+    private static $table = "categorias";
     
+    /**
+     * Get category
+     *
+     * @param int $id
+     * 
+     * @return array
+     */
+    static public function getCategory(int $id) : array{
+        return ConnectionDB::select("", self::$table, "", "id LIKE ".$id, "", "");
+    }
+
     static public function getCategories(string $select, string $from, string $where, string $orderBy, string $orderHow) : array{
-        $datos = ConnectionDB::select($select, $from, $where, $orderBy, $orderHow);
+        $datos = ConnectionDB::select($select, $from, "", $where, $orderBy, $orderHow);
         return $datos;
     }
 

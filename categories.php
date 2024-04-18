@@ -6,18 +6,11 @@ session_start();
 $save = true;
 
 if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
-    $name = $_POST['name'];
-    $description = $_POST['description'];
-    $saved = Category::addCategory($name, $description);
-    $save = true;
+    $saved = Category::addCategory($_POST['name'], $_POST['description']);
 } else if(isset($_POST['modify'])) {
-    $name = $_POST['name'];
-    $description = $_POST['description'];    
-    $saved = Category::updateCategory($name, $description, $_GET['id']);
+    $saved = Category::updateCategory($_POST['name'], $_POST['description'], $_GET['id']);
     $data = Category::getCategories("", "categorias", "id LIKE ".$_GET['id'], "", "")[0];
     $save = false;
-} else {
-    unset($saved);
 }
 
 if (isset($_GET['id'])){

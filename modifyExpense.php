@@ -9,7 +9,6 @@ if (isset($_POST['save'])){
     $description = $_POST['description'];
     $category = $_POST['category'];
     $result = Expenses::updateExpense("$date", $quantity, $description, $category, $_GET['id']);
-    $data = Expenses::getExpense($_GET['id']);
 } else {
     unset($result);
 }
