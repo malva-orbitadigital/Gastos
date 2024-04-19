@@ -10,17 +10,45 @@ function showList(){
     echo Expenses::showTotal();
 }
 
+
 echo '<div class="mt-5">';
-
-    if (isset($_GET['id'])){
-        if (!is_numeric($_GET['id'])){
-            $result = false;
-        } else {
-            $result = Expenses::deleteExpense($_GET['id']);
-        }
-
-        echo !$result ? "
-        <p class='bg-danger text-center text-white mt-5 p-3'>'No se ha podido eliminar la anotación'</p>" : "";
-    }
-    showList();
+    showList($page, $limit);
 echo "</div>";
+?>
+
+<script>
+    $(function(){
+        $(".deleteBtn").on("click", (e) => {
+            let id = e.currentTarget.id;
+            let action = 'deleteExpense'
+            $.ajax({
+                url: './apiService.php',
+                data: {id, action},
+                dataType: 'json',
+                method: 'POST'
+                }
+            ).done(function(a) {
+                console.log(a)
+                if (a){
+                    $(`#${id}`).remove();
+                    updateTotal();
+                } else {
+                    $('#error').text('No se ha podido eliminar la anotación');
+                    $('#error').removeClass('d-none');
+                }
+            })
+
+            function updateTotal(){
+                $.ajax({
+                    url: './apiService.php',
+                    data: {action: 'getTotal'},
+                    dataType: 'json'
+                    }
+                ).done(function(a) {
+                    console.log(a)
+                    $('#total').html(a['html']);
+                })
+            }
+        })    
+    })
+</script>

@@ -4,11 +4,8 @@ include_once 'inc_pie.php';
 
 
 if (isset($_POST['save'])){
-    $date = $_POST['date'];
-    $quantity = $_POST['quantity'];
-    $description = $_POST['description'];
-    $category = $_POST['category'];
-    $result = Expenses::updateExpense("$date", $quantity, $description, $category, $_GET['id']);
+    $result = Expenses::updateExpense((string)$_POST['date'], (string)$_POST['quantity'], (string)$_POST['description'], 
+    (string)$_POST['category'], (int)$_GET['id']);
 } else {
     unset($result);
 }

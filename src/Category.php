@@ -13,7 +13,7 @@ class Category {
      * @return array
      */
     static public function getCategory(int $id) : array{
-        return ConnectionDB::select("", self::$table, "", "id = ".$id, "", "");
+        return ConnectionDB::select("", self::$table, "", "id = ".$id, "", "", "");
     }
 
     /**
@@ -26,7 +26,7 @@ class Category {
      * @return array query in an associative array
      */
     static public function getCategories(string $select, string $join, string $where, string $orderBy, string $orderHow) : array{
-        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow);
+        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow, "");
         return $datos;
     }
 
@@ -49,7 +49,7 @@ class Category {
         $html .= '</tr></thead>';
         $html .= '<tbody>';
         foreach($data as $row){
-            $html .= "<tr>";
+            $html .= "<tr id=".$row['id'].">";
             $keys = array_keys($row);
             $last_key = end($keys);
             foreach($row as $name => $col){
@@ -60,8 +60,8 @@ class Category {
                 if ($name === $last_key){
                     $html .= "<td><a href='CRUDcategories.php?id=".$row['id']."'
                     class='btn btn-outline-secondary'>Modificar</a></td>
-                    <td><a href='CRUDcategories.php?id=".$row['id']."&action=delete'
-                    class='btn btn-outline-danger'>Eliminar</a></td>";
+                    <td><button id='".$row['id']."'
+                    class='deleteBtn btn btn-outline-danger'>Eliminar</button></td>";
                 } 
                 //TODO: generalizar botones
             }

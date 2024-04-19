@@ -21,7 +21,7 @@ class Expenses {
      */
     static public function getExpense(int $id) : array{
         $data = ConnectionDB::select("fecha, importe, ".self::$table.".descripcion, c.nombre as categoria", 
-        self::$table, " inner join categorias AS c on ".self::$table.".categoria = c.id", self::$table.".id = $id", "", "");
+        self::$table, " inner join categorias AS c on ".self::$table.".categoria = c.id", self::$table.".id = $id", "", "" , "");
         return $data[0] ?? []; // TODO falta algo respecto a la funcion ConnectionDB::select
     }
 
@@ -34,12 +34,13 @@ class Expenses {
      * 
      * @return array query in an associative array
      */
-    static public function getExpenses(string $select, string $join, string $where, string $orderBy, string $orderHow) : array{
-        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow);
+    static public function getExpenses(string $select, string $join, string $where, string $orderBy, string $orderHow, int $limit, int $page) : array{
+        ($limit === -1 || $page === -1) ? 
+        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow, "") : 
+        $datos = ConnectionDB::selectPaginate($select, self::$table, $join, $where, $orderBy, $orderHow, $limit, $page);
         return $datos;
     }
    
-    //TODO: paginación
     /**
      * Creates a table with the expenses
      * 
@@ -49,12 +50,13 @@ class Expenses {
      * @param string $select 
      */
     static function showExpenses(array $data, bool $actions) : string{
-        
+        // TODO en el front (fecha arriba y abajo) y back orderBy y orderWay (detectar con js el cambio: existen 3 arriba abajo y por defecto)
         if (count($data) === 0){
-            return "No hay resultados";
+            return '<div class="text-center alert alert-secondary" role="alert">No hay resultados</div>';
         }
         
-        $html = '<table class="table"><thead><tr>';
+        $html = "<p id='error' class='d-none bg-danger text-center text-white mt-5 p-3'></p>";
+        $html .= '<table class="table"><thead><tr>';
         foreach($data[0] as $head => $value){
             $html .= $head !== 'id' ? "<th scope='col'>".ucfirst($head)."</th>" : "";
         }
@@ -62,10 +64,10 @@ class Expenses {
         $html .= '</tr></thead>';
         $html .= '<tbody>';
         foreach($data as $row){
-            $html .= "<tr>";
+            $html .= "<tr id=".$row['id'].">";
             $buttons = "<td><a href='modifyExpense.php?id=".$row['id']."'
                 class='btn btn-outline-secondary'>Modificar</a></td>
-                <td><a href='listExpenses.php?id=".$row['id']."' class='btn btn-outline-danger'>Eliminar</a></td>";
+                <td><button id=".$row['id']." class='deleteBtn btn btn-outline-danger'>Eliminar</button></td>";
             foreach($row as $name => $col){
                 if ($name !== 'id'){       
                     switch($name){
@@ -95,8 +97,12 @@ class Expenses {
      * @return string html for total
      */
     public static function showTotal(){
-        return "<div class='m-5 text-center fs-4'><strong>Total</strong>: ".
-        number_format(self::getTotal(), 2). "€</div>";
+        $total = self::getTotal();
+        if ($total == 0){
+            return "";
+        }
+        return "<div id='total' class='m-5 text-center fs-4'><strong>Total</strong>: ".
+        number_format($total, 2). "€</div>";
     }
 
     /**
@@ -148,8 +154,8 @@ class Expenses {
      * 
      * @return float
      */
-    private static function getTotal() : float{
-        return ConnectionDB::select('sum(importe) as total',self::$table, '','','','')[0]['total'] ?? 0;
+    public static function getTotal() : float{
+        return ConnectionDB::select('sum(importe) as total',self::$table, '','','','','')[0]['total'] ?? 0;
     }
     
     /**
