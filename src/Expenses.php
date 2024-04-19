@@ -75,7 +75,9 @@ class Expenses {
                         case 'importe':
                             $html .= "<td>".$col."€</td>";
                             break;
-                            //TODO: text overflow descripcion
+                        case 'descripcion':
+                            $html .= "<td style='max-width:10px; overflow:overlay'>$col</td>";
+                            break;
                         default:
                             $html .= "<td>".ucfirst($col)."</td>";
                     }
