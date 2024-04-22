@@ -1,41 +1,36 @@
 <?php
 include_once 'inc_cabecera.php';
 include_once 'inc_pie.php';
+include_once 'showTable.php';
 session_start();
 
 $save = true;
-
-//TODO: preguntar url de delete no cambia después de añadir
+$page = (int) ($_GET['page'] ?? 1);
+$limit = 2; // TODO selector [10, 15, 20, 25]
 
 if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
-    if (!Category::addCategory($_POST['name'], $_POST['description']))
+    if (!Categories::addCategory($_POST['name'], $_POST['description']))
         $alert = 'No se ha podido añadir la categoría';
 } else if(isset($_POST['modify'])) {
-    if(!Category::updateCategory($_POST['name'], $_POST['description'], $_GET['id']))
+    if(!Categories::updateCategory((string)$_POST['name'], (string)$_POST['description'], (int)$_GET['id']))
         $alert = "No se ha podido modificar la categoría";
     $save = false;
 }
 
-if (isset($_GET['id'])){
-    if (isset($_GET['action'])){
-        $result = (Category::deleteCategory($_GET['id']));
-        if (isset($result['error'])) $alert = "Esta categoría tiene gastos asociados";
-        $save = true;
-    } else {
-        $data = Category::getCategory($_GET['id'])[0];
-        $save = false;
-    }
+if (isset($_GET['id'])){ // MODIFY
+    $data = Categories::getCategory($_GET['id'])[0];
+    $save = false;
 }
 
-$categories = Category::getCategories('','','','','');
+$data = Categories::getCategories('','','','','',$limit,$page);
 
 $rand=rand();
 $_SESSION['rand']=$rand;
 
 
 echo "<h3 class='text-center m-3'>Categorías</h3>";
-
-echo Category::showCategories($categories);
+    showList($page, $limit, 'Categories', $data);
+// echo Categories::showCategories($categories);
 echo "<hr class='m-5'/>";
 
 if (isset($alert)){
@@ -59,7 +54,28 @@ if (isset($alert)){
         <?php
             echo $save ? '<button name="save" type="submit" class="btn btn-primary">Guardar</button>'
             : '<button name="modify" type="submit" class="btn btn-primary">Actualizar</button>
-            <a href="CRUDcategories.php" class="mt-5 btn btn-primary mb-5">Nueva categoría</a>';
+            <a href="categories.php" class="mt-5 btn btn-primary mb-5">Nueva categoría</a>';
         ?>
     </form>
 </div>
+
+<script>
+    $(function(){
+        $(".deleteBtn").on("click", (e) => {
+            let id = e.currentTarget.id;
+            let action = 'deleteCategory'
+            $.ajax({
+                url: './apiService.php',
+                data: {id, action},
+                dataType: 'json',
+                method: 'POST'
+                }
+            ).done(function(a) {
+                console.log(a)
+                if (a){
+                    $(`#${id}`).remove();
+                }
+            })
+        })    
+    })
+</script>

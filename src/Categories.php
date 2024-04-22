@@ -1,10 +1,32 @@
 <?php
 include_once 'ConnectionDB.php';
 
-class Category {
+class Categories {
 
     private static $table = "categorias";
     
+    /**
+     * Get number of expenses
+     *
+     * @return int
+     */
+    static public function getNumCategories() : int{
+        return ConnectionDB::getTotalRegister(self::$table);
+    }
+
+    /**
+     * Get data of expenses
+     * 
+     * @param string $orderBy posible column to order by
+     * @param string $orderHow asc/desc
+     * 
+     * @return array query in an associative array
+     */
+    static public function get(string $where ='', string $orderBy, string $orderHow, int $limit, int $page) : array{
+        $data = self::getCategories("", "", $where, $orderBy, $orderHow, $limit, $page);
+        return $data;
+    }
+
     /**
      * Get one category
      *
@@ -13,7 +35,7 @@ class Category {
      * @return array
      */
     static public function getCategory(int $id) : array{
-        return ConnectionDB::select("", self::$table, "", "id = ".$id, "", "", "");
+        return ConnectionDB::select("", self::$table, "", "id = ".$id, "", "",0,0);
     }
 
     /**
@@ -25,8 +47,8 @@ class Category {
      * 
      * @return array query in an associative array
      */
-    static public function getCategories(string $select, string $join, string $where, string $orderBy, string $orderHow) : array{
-        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow, "");
+    static public function getCategories(string $select, string $join, string $where, string $orderBy, string $orderHow, int $limit, int $page) : array{
+        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow, $limit, $page);
         return $datos;
     }
 
@@ -58,7 +80,7 @@ class Category {
                 }
                 $html .= "<td>".ucfirst($col)."</td>";
                 if ($name === $last_key){
-                    $html .= "<td><a href='CRUDcategories.php?id=".$row['id']."'
+                    $html .= "<td><a href='categories.php?id=".$row['id']."'
                     class='btn btn-outline-secondary'>Modificar</a></td>
                     <td><button id='".$row['id']."'
                     class='deleteBtn btn btn-outline-danger'>Eliminar</button></td>";

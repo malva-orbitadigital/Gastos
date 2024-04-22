@@ -21,10 +21,10 @@
                     <a class="nav-link" href="search.php">Buscar</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="listExpenses.php">Gastos</a>
+                    <a class="nav-link" href="expenses.php">Gastos</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" href="CRUDcategories.php">Categorías</a>
+                    <a class="nav-link" href="categories.php">Categorías</a>
                     </li>
                     <li class="nav-item">
                     <a class="nav-link" href="addExpense.php">Nuevo</a>
@@ -39,5 +39,5 @@
 <?php
 include_once './src/ConnectionDB.php';
 include_once './src/Expenses.php';
-include_once './src/Category.php';
+include_once './src/Categories.php';
 ?>

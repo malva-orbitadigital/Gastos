@@ -1,6 +1,6 @@
 <?php
 include_once './src/Expenses.php';
-include_once './src/Category.php';
+include_once './src/Categories.php';
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
@@ -11,7 +11,7 @@ switch ($action) {
         break;
     case 'deleteCategory':
         $id = (int)$_POST['id'] ?? 0;
-        echo json_encode(Category::deleteCategory($id));
+        echo json_encode(Categories::deleteCategory($id));
         break;
     case 'getTotal':
         echo json_encode(['html' => Expenses::showTotal()]);

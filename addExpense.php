@@ -3,14 +3,11 @@ include_once 'inc_cabecera.php';
 include_once 'inc_pie.php';
 session_start();
 
-//TODO: arreglar date
+//TODO: arreglar date y number (si quieres puedes hacerlo con jquery)
 
 if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
-    $date = $_POST['date'];
-    $quantity = $_POST['quantity'];
-    $description = $_POST['description'];
-    $category = $_POST['category'];
-    $saved = Expenses::addExpense($date, $quantity, $description, $category);
+    $saved = Expenses::addExpense((string)$_POST['date'], (string)$_POST['quantity'], 
+    (string)$_POST['description'], (string)$_POST['category']);
 } else {
     unset($saved);
 }
@@ -28,7 +25,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
     <form method="post" action="" class="col-6 offset-3 ">
         <div class="mb-3">
             <label for="date" class="form-label">Fecha</label>
-            <input name="date" type="date" class="form-control" id="date" required>
+            <input name="date" value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" id="date" required>
         </div>
         <div class="mb-3">
             <label for="quantity" class="form-label">Importe</label>
@@ -43,7 +40,7 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
             <select id="category" name="category" class="form-select" required>
                 <option value="">Selecciona una categoría...</option>
                 <?php
-                foreach (Category::getCategories('','categorias','','','') as $category){
+                foreach (Categories::getCategories('','categorias','','','') as $category){
                     echo "<option value=".$category['id'].">".ucfirst($category['nombre'])."</option>";
                 }
                 ?>
@@ -55,6 +52,6 @@ if (isset($_POST['save']) && $_POST['randcheck']==$_SESSION['rand']){
 </div>
 <?php
 $data = Expenses::getExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", 
-"gastos inner join categorias on gastos.categoria = categorias.id", "", "fecha", "desc");
+"gastos inner join categorias on gastos.categoria = categorias.id", "", "fecha", "desc", -1, -1);
 echo Expenses::showExpenses($data, false);
 ?>

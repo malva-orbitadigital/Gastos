@@ -15,13 +15,26 @@ class Expenses {
     }
 
     /**
+     * Get data of expenses
+     * 
+     * @param string $orderBy posible column to order by
+     * @param string $orderHow asc/desc
+     * 
+     * @return array query in an associative array
+     */
+    static public function get(string $where = '', string $orderBy = "fecha", string $orderHow = "desc", int $limit, int $page) : array{
+        $data = self::getExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", "gastos inner join categorias on gastos.categoria = categorias.id", $where, $orderBy, $orderHow, $limit, $page);
+        return $data;
+    }
+
+    /**
      * @param int $id
      *
      * @return array
      */
     static public function getExpense(int $id) : array{
         $data = ConnectionDB::select("fecha, importe, ".self::$table.".descripcion, c.nombre as categoria", 
-        self::$table, " inner join categorias AS c on ".self::$table.".categoria = c.id", self::$table.".id = $id", "", "" , "");
+        self::$table, " inner join categorias AS c on ".self::$table.".categoria = c.id", self::$table.".id = $id", "", "" ,0,0);
         return $data[0] ?? []; // TODO falta algo respecto a la funcion ConnectionDB::select
     }
 
@@ -35,9 +48,7 @@ class Expenses {
      * @return array query in an associative array
      */
     static public function getExpenses(string $select, string $join, string $where, string $orderBy, string $orderHow, int $limit, int $page) : array{
-        ($limit === -1 || $page === -1) ? 
-        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow, "") : 
-        $datos = ConnectionDB::selectPaginate($select, self::$table, $join, $where, $orderBy, $orderHow, $limit, $page);
+        $datos = ConnectionDB::select($select, self::$table, $join, $where, $orderBy, $orderHow, $limit, $page);
         return $datos;
     }
    
@@ -96,7 +107,7 @@ class Expenses {
     /**
      * @return string html for total
      */
-    public static function showTotal(){
+    public static function showTotal() : string{
         $total = self::getTotal();
         if ($total == 0){
             return "";
@@ -155,7 +166,7 @@ class Expenses {
      * @return float
      */
     public static function getTotal() : float{
-        return ConnectionDB::select('sum(importe) as total',self::$table, '','','','','')[0]['total'] ?? 0;
+        return ConnectionDB::select('sum(importe) as total',self::$table, '','','','',0,0)[0]['total'] ?? 0;
     }
     
     /**

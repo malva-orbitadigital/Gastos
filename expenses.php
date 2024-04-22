@@ -1,18 +1,15 @@
 <?php
 include_once 'inc_cabecera.php';
 include_once 'inc_pie.php';
+include_once 'showTable.php';
+// ? Todos los TODO se haran en angular cuando se haga esto mismo en angular.
 
-function showList(){
-    $data = Expenses::getExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", 
-    "gastos inner join categorias on gastos.categoria = categorias.id",
-    "", "fecha", "desc");
-    echo Expenses::showExpenses($data, true);
-    echo Expenses::showTotal();
-}
-
+$page = (int) ($_GET['page'] ?? 1);
+$limit = 2; // TODO selector [10, 15, 20, 25]
+$data = Expenses::getExpenses("fecha, gastos.descripcion, importe, categorias.nombre as categoria, gastos.id", "gastos inner join categorias on gastos.categoria = categorias.id", "", "fecha", "desc", $limit, $page);
 
 echo '<div class="mt-5">';
-    showList($page, $limit);
+    showList($page, $limit, 'Expenses', $data);
 echo "</div>";
 ?>
 
@@ -32,6 +29,7 @@ echo "</div>";
                 if (a){
                     $(`#${id}`).remove();
                     updateTotal();
+                    $('#error').addClass('d-none');
                 } else {
                     $('#error').text('No se ha podido eliminar la anotación');
                     $('#error').removeClass('d-none');

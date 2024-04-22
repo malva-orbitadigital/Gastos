@@ -6,7 +6,7 @@ class ConnectionDB{
     static private $username = "root";
     static private $dbname = "contab";
 
-    //TODO: por qué no hay que recargar
+    //TODO: prepare bind
 
     /**
      * Connects to database
@@ -31,10 +31,12 @@ class ConnectionDB{
      * @param string $where posible conditions
      * @param string $orderBy posible column to order by
      * @param string $orderHow asc/desc
+     * @param integer $offset number of columns
+     * @param integer $page start of pagination
      * 
      * @return array query in an associative array
      */
-    public static function select(string $select, string $table, string $join, string $where, string $orderBy, string $orderHow) : array{
+    public static function select(string $select, string $table, string $join, string $where, string $orderBy, string $orderHow, int $offset, int $page) : array{
         $connection = ConnectionDB::connect();
 
         if ($table === '') return "Param error";
@@ -47,6 +49,10 @@ class ConnectionDB{
             $query .= " ORDER BY $orderBy "; 
             $orderHow === 'desc' ? $query .= "DESC" : $query .= "ASC";
         }
+        if ($offset > 0|| $page > 0){
+            $limit = $page == 1 ? 0 : $offset * ($page - 1);
+            $query .= " LIMIT $limit, $offset ";
+        } 
 
         try{
             $stmt = $connection->prepare($query);
@@ -146,7 +152,7 @@ class ConnectionDB{
      * @return int 
      */
     static function getTotalRegister(string $table) : int{
-        $datos = self::select("count(*) as total", $table, "", "", "", "");
+        $datos = self::select("count(*) as total", $table, "", "", "", "",0,0);
         return $datos[0]['total'] ?? 0;
     }
 
